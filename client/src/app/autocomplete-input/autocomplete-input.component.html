@@ -1,0 +1,17 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <div class="output-result" >{{output}}</div>
+    <div [className]="isSearchboxOpened ? 'searchbar-wrapper opened' : 'searchbar-wrapper closed'">
+    <ion-searchbar #searchBox 
+                  [(ngModel)]="input" 
+                  (ionInput)="updateSearchResults()" 
+                  placeholder="Search for a place"></ion-searchbar>
+    </div>
+
+  </ion-toolbar>
+</ion-header><!-- Generated template for the AutocompleteInputComponent component -->
+<ion-list class="result-list" [hidden]="places.length == 0">
+  <ion-item *ngFor="let item of places" tappable (click)="onSerachResultTap(item)">
+    {{ item.label }}
+  </ion-item>
+</ion-list>
