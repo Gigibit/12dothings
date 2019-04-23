@@ -28,7 +28,7 @@ client/plugins/
 client/plugins/android.json
 client/plugins/ios.json
 $RECYCLE.BIN/
-
+server/.venv/lib/
 .DS_Store
 Thumbs.db
 UserInterfaceState.xcuserstate
