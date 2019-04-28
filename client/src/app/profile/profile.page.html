@@ -1,0 +1,41 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>profile</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div *ngIf="userInfo">
+    <p>{{userInfo.name}} {{userInfo.surname}}</p>
+    <ion-img id="profileImage" [src]="userInfo.img" ></ion-img>
+  </div>
+  
+  
+  <div id="own-proposals-section" *ngIf="ownProposals && ownProposals.length > 0 ">
+    <ion-title>created by you</ion-title>
+    <ion-list>
+      <ion-item *ngFor="let proposal of ownProposals">
+        {{proposal.name}}, {{proposal.description}}
+      </ion-item>
+    </ion-list>
+  </div>
+  
+  <div id="joined-section" *ngIf="joinedProposals && joinedProposals.length > 0 ">
+    <ion-title>joined by you</ion-title>
+    <ion-list>
+      <ion-item *ngFor="let proposal of joinedProposals">
+        {{proposal.name}}, {{proposal.description}}
+      </ion-item>
+    </ion-list>
+  </div>
+  
+  <!-- <div id="requested-section" *ngIf="requestedProposals && requestedProposals.length > 0 ">
+    <ion-title>requested by you</ion-title>
+    <ion-list>
+      <ion-item *ngFor="let proposal of requestedProposals">
+        {{proposal.name}}, {{proposal.description}}
+      </ion-item>
+    </ion-list>
+  </div> -->
+  
+</ion-content>

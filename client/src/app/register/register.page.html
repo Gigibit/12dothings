@@ -3,7 +3,6 @@
     <ion-title>Chatkit Demo</ion-title>
   </ion-toolbar>
 </ion-header>
-<ion-content padding>
   <form #f="ngForm" (ngSubmit)="register(f)">
     <ion-grid>
       <ion-row justify-content-center>
@@ -12,18 +11,21 @@
             <h3>Register</h3>
           </div>
           <div padding>
-            <ion-item>
-              <ion-input name="name" type="text" placeholder="Name" ngModel required></ion-input>
-            </ion-item>
-            <ion-item>
-              <ion-input name="email" type="email" placeholder="your@email.com" ngModel required></ion-input>
-            </ion-item>
-            <ion-item>
-              <ion-input name="password" type="password" placeholder="Password" ngModel required></ion-input>
-            </ion-item>
-            <ion-item>
-              <ion-input name="confirm" type="password" placeholder="Password again" ngModel required></ion-input>
-            </ion-item>
+              <ion-item>
+                  <ion-input name="name" type="text" placeholder="Pippo" ngModel required></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-input name="surname" type="text" placeholder="Dal Sacco" ngModel required></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-input name="email" type="email" placeholder="your@email.com" ngModel required></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-input name="password" type="password" placeholder="Password" ngModel required></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-input name="confirm_password" type="password" placeholder="Confirm password" ngModel required></ion-input>
+                </ion-item>
           </div>
           <div padding>
             <ion-button size="large" type="submit" [disabled]="f.invalid" expand="block">Register</ion-button>
@@ -32,4 +34,3 @@
       </ion-row>
     </ion-grid>
   </form>
-</ion-content>

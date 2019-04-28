@@ -8,7 +8,7 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
-import { ProposalComponent } from './proposal/proposal.component';
+import { ProposalsComponent } from './proposals/proposals.component';
 import { CreateProposalComponent } from './create-proposal/create-proposal.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
@@ -19,16 +19,22 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { SocketIoModule, SocketIoConfig } from 'ng-socket-io';
 import { ChatRoomPage } from './chat/chat.component';
 import { AutocompleteInputComponent } from './autocomplete-input/autocomplete-input.component';
-import { CommonModule } from '@angular/common';
+import { Geolocation } from '@ionic-native/geolocation/ngx';
+import { NativeGeocoder } from '@ionic-native/native-geocoder/ngx';
+import { ProposalDetailComponent } from './proposal-detail/proposal-detail.component';
+import { LoginPage } from './login/login.page';
+import { LoginPageModule } from './login/login.module';
+import { RegisterPageModule } from './register/register.module';
 
 const config: SocketIoConfig = { url: 'http://localhost:3001/messages', options: {} };
 
 @NgModule({
   declarations: [
     AppComponent,
-    ProposalComponent,
+    ProposalsComponent,
     CreateProposalComponent,
     ChatRoomPage,
+    ProposalDetailComponent,
     AutocompleteInputComponent
   ],
   entryComponents: [],
@@ -38,14 +44,18 @@ const config: SocketIoConfig = { url: 'http://localhost:3001/messages', options:
     AppRoutingModule,
     HttpClientModule,
     FormsModule,
+    LoginPageModule,
+    RegisterPageModule,
     ReactiveFormsModule,
     IonicStorageModule.forRoot(),
-    BrowserAnimationsModule
-    //SocketIoModule.forRoot(config)
+    BrowserAnimationsModule,
+    SocketIoModule.forRoot(config)
   ],
   providers: [
     StatusBar,
     SplashScreen,
+    Geolocation,
+    NativeGeocoder,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent]

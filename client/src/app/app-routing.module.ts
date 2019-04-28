@@ -1,15 +1,19 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
-import { ProposalComponent } from './proposal/proposal.component';
+import { ProposalsComponent } from './proposals/proposals.component';
 import { CreateProposalComponent } from './create-proposal/create-proposal.component';
+import { ProposalDetailComponent } from './proposal-detail/proposal-detail.component';
+import { AuthGuard } from './guards/auth.guard';
 
 const routes: Routes = [
-  { path: '', redirectTo: 'home', pathMatch: 'full' },
+  { path: '', redirectTo: 'proposals', pathMatch: 'full' },
   { path: 'home', loadChildren: './home/home.module#HomePageModule' },
-  { path: 'proposals', component: ProposalComponent },
-  { path: 'create-proposal', component: CreateProposalComponent },
+  { path: 'proposals', canActivate: [AuthGuard],  component: ProposalsComponent },
+  { path: 'create-proposal', canActivate: [AuthGuard],  component: CreateProposalComponent },
+  { path: 'proposal-detail/:id', canActivate: [AuthGuard],  component: ProposalDetailComponent },
   { path: 'login', loadChildren: './login/login.module#LoginPageModule' },
   { path: 'register', loadChildren: './register/register.module#RegisterPageModule' },
+  { path: 'profile', loadChildren: './profile/profile.module#ProfilePageModule' },
 ];
 
 @NgModule({

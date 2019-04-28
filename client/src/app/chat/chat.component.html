@@ -3,7 +3,6 @@
     <ion-title>Chat Room</ion-title>
   </ion-toolbar>
 </ion-header>
-<ion-content padding>
   <div class="container">
     <div *ngFor="let msg of messages" class="message left">
       <img class="user-img"  alt="" src="">
@@ -20,7 +19,6 @@
       </div>
     </div>
   </div>
-</ion-content>
 <ion-footer no-border>
   <div class="input-wrap">
     <textarea #messageInput placeholder="Enter your message!" [(ngModel)]="message" (keyup.enter)="sendMessage()">

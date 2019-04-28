@@ -1,13 +1,12 @@
 <ion-header>
   <ion-toolbar color="primary">
-    <ion-title>Chatkit Demo</ion-title>
+    <ion-title>oo12do</ion-title>
   </ion-toolbar>
 </ion-header>
-<ion-content padding>
   <form #f="ngForm" (ngSubmit)="login(f)">
     <ion-grid>
-      <ion-row justify-content-center>
-        <div *ngIf="showError">Error! Please try again</div>
+      <ion-row  *ngIf="showError" justify-content-center>
+        <div>Error! Please try again</div>
       </ion-row>
       <ion-row justify-content-center>
         <ion-col align-self-center size-md="6" size-lg="5" size-xs="12">
@@ -24,9 +23,10 @@
           </div>
           <div padding>
             <ion-button size="large" type="submit" [disabled]="f.invalid" expand="block">Login</ion-button>
+            <ion-button expand="block" color="secondary" routerLink="/register" routerDirection="forward">Register</ion-button>
           </div>
+
         </ion-col>
       </ion-row>
     </ion-grid>
   </form>
-</ion-content>

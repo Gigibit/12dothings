@@ -1,3 +1,17 @@
-<p>
-  proposal-detail works!
-</p>
+<ion-content padding *ngIf="proposal">
+  <ion-item>
+    <ion-label>
+      {{proposal.title}}
+    </ion-label>
+    <p>
+      {{proposal.description}}
+    </p>
+  </ion-item>
+  <div *ngIf="proposal.users">
+    <div *ngFor="let user of proposal.users">
+      {{user.img}}, {{user.name}}
+    </div>
+  </div>
+  <ion-button *ngIf="state == 'NOT_REQUESTED'" (click)="join()">ask for join!</ion-button>
+  <ion-button *ngIf="state == 'PENDING'" [disabled]="true">request pending, stay tuned!</ion-button>
+</ion-content>
