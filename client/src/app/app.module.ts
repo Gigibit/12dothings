@@ -26,6 +26,14 @@ import { LoginPage } from './login/login.page';
 import { LoginPageModule } from './login/login.module';
 import { RegisterPageModule } from './register/register.module';
 
+ 
+import { Camera } from '@ionic-native/Camera/ngx';
+import { File } from '@ionic-native/File/ngx';
+import { WebView } from '@ionic-native/ionic-webview/ngx';
+import { FilePath } from '@ionic-native/file-path/ngx';
+ 
+
+
 const config: SocketIoConfig = { url: 'http://localhost:3001/messages', options: {} };
 
 @NgModule({
@@ -56,6 +64,10 @@ const config: SocketIoConfig = { url: 'http://localhost:3001/messages', options:
     SplashScreen,
     Geolocation,
     NativeGeocoder,
+    Camera,
+    File,
+    WebView,
+    FilePath,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent]

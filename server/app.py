@@ -9,6 +9,7 @@ from flask_socketio         import SocketIO, join_room, leave_room, emit
 from flask_cors             import CORS
 from itsdangerous           import URLSafeTimedSerializer
 from werkzeug.security      import generate_password_hash, check_password_hash
+from werkzeug.utils         import secure_filename
 
 from flask                  import jsonify
 from pymongo                import MongoClient, GEOSPHERE
@@ -33,6 +34,10 @@ app  = Flask(__name__, template_folder='./templates')
 app.config['SECRET_KEY'] = 'vnkdjnfjknfl1232#'
 app.config.from_pyfile('config.cfg')
 
+UPLOAD_FOLDER = './static/images/'
+ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
+
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 s = URLSafeTimedSerializer(MY_SECRET_FOR_EVER)
 
 cors        = CORS(app, resources={r"/api/*": {"origins": "*"}})
@@ -260,8 +265,16 @@ def login():
     return jsonify({ 'status' : 'ERROR', 'status_code' : 400 })
 
 
+@app.route('/api/upload-image', methods=['POST'])
+def upload_image():
+    access_token = request.headers.get('auth-token', None)
+    if access_token :
+        user, id, email = get_user(access_token)
+        upload_file(id)
+        return jsonify({ 'status' : 'OK', 'status_code': 200 })
 
-
+    else :
+        return jsonify({ 'status' : 'ERROR' ,'code' : 'user_not_verified', 'status_code' : 401 })
 
 '''
     SOCKETIO
@@ -347,3 +360,33 @@ def get_user(access_token):
     jwt = from_jwt(access_token)
     id = jwt.get('id', None)
     return jwt, decode(id) if id else None, jwt.get('email',None)
+
+
+def allowed_file(filename):
+    filename, file_extension = os.path.splitext(filename)
+    return file_extension[1:] in ALLOWED_EXTENSIONS
+
+def upload_file(user_dir):
+    if request.method == 'POST':
+        print('hey')
+        # check if the post request has the file part
+        if 'file' not in request.files:
+            flash('No file part')
+            print('hey niente')
+            return False
+        file = request.files['file']
+        # if user does not select file, browser also
+        # submit a empty part without filename
+        if file.filename == '':
+            print('hey niente')
+            flash('No selected file')
+            return False
+        if file and allowed_file(file.filename):
+            print(file.filename)
+            filename = secure_filename(file.filename)
+            path = os.path.join(app.config['UPLOAD_FOLDER'], user_dir, filename)
+            os.makedirs(os.path.dirname(path), exist_ok=True)
+            print(os.path.dirname(path))
+            file.save(path)
+            return True
+        print('hey' + str(allowed_file(file.filename)))
