@@ -57,7 +57,7 @@ export class ProfilePage implements OnInit {
         buttons: [{
           text: 'Load from Library',
           handler: () => {
-              this.userService.takePicture(PictureSourceType.PHOTOLIBRARY, (uri)=> this.uri = uri);
+              this.userService.takePicture(PictureSourceType.PHOTOLIBRARY, (uri)=> this.images.push(uri));
           }
         },
         {

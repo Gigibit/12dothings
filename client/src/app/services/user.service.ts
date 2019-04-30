@@ -4,7 +4,7 @@ import { AuthService } from './auth.service';
 import { Camera, CameraOptions, PictureSourceType } from '@ionic-native/Camera/ngx';
 import { AUTH_SERVER, SERVICE_SERVER } from '../config';
 import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-native/file-transfer/ngx'
-
+import { Platform } from '@ionic/angular';
 
 const CONTEXT = AUTH_SERVER + '/api/get-context'
 const UPLOAD_URL = SERVICE_SERVER + "/api/upload-image"
@@ -17,15 +17,16 @@ export class UserService {
   headers = new HttpHeaders();
   contentType = 'image/png';
   fileTransfer: FileTransferObject = this.transfer.create();
- 
+  
   constructor(
     private http : HttpClient,
     private transfer: FileTransfer,
+    private platform: Platform,
     private camera: Camera,
     private auth: AuthService
     ) {
-    
-
+      
+      
     }
     
     getContext(){
@@ -40,15 +41,28 @@ export class UserService {
         destinationType: this.camera.DestinationType.FILE_URI,
         sourceType: sourceType,
         saveToPhotoAlbum: false,
+        encodingType: this.camera.EncodingType.JPEG,
+        mediaType: this.camera.MediaType.PICTURE,
+        targetWidth: 400,
+        targetHeight: 400,
         correctOrientation: true
       };
-      
       this.camera.getPicture(options).then((imageData) => {
+        if (this.platform.is('mobileweb') || this.platform.is('desktop'))
+        {
+          imageData = "data:image/jpeg;base64," + imageData;
+          const formData = new FormData();
+          const imgBlob = this.dataURItoBlob(imageData);
+          formData.append('file', imgBlob, this.createFileName());
+          this.uploadImageData(formData);
+        }
+        else{
+          this.uploadUri(imageData)
+
+        }
         if(onUri){
           onUri(imageData)
         }
-        console.log(imageData)
-        this.uploadUri(imageData)
       }, onError || console.log );
     }
     uploadUri(uri, onSuccess: (data)=>void = data=>{ console.log(data) }){
@@ -63,15 +77,35 @@ export class UserService {
         },
         fileName :  this.createFileName()
       }
-      
-      console.log(options.headers)
-
-      this.fileTransfer.upload(uri, UPLOAD_URL,options)
+      this.fileTransfer.upload(encodeURI(uri), UPLOAD_URL,options)
       .then(data=>{ 
         onSuccess(data)
         console.log("yuppi")
       })
       .catch( (err) => console.log(err));
+    }
+    uploadImageData(formData: FormData) {
+      return this.http.post(UPLOAD_URL, formData).subscribe(data=> console.log(data));
+    }
+    
+    dataURItoBlob(dataURI) {
+      // convert base64/URLEncoded data component to raw binary data held in a string
+      var byteString;
+      if (dataURI.split(',')[0].indexOf('base64') >= 0)
+      byteString = atob(dataURI.split(',')[1]);
+      else
+      byteString = unescape(dataURI.split(',')[1]);
+      
+      // separate out the mime component
+      var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+      
+      // write the bytes of the string to a typed array
+      var ia = new Uint8Array(byteString.length);
+      for (var i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+      }
+      
+      return new Blob([ia], {type:mimeString});
     }
     createFileName() {
       var d = new Date(),

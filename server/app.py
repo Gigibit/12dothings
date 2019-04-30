@@ -76,26 +76,34 @@ def send_email_confirmation(email):
 '''
 
 @app.route('/api/get-context', methods=['GET'])
-def get_context():
+def get_user_context():
+    print('ok')
     access_token    = request.headers.get('auth-token',None)
+    print('ok po')
     if access_token:
         user, id, email             = get_user(access_token)
+        print('done token')
         if id and email:
             requests = db.proposals.find( { 'join_requests.user' : id } )
-            
-            for join_request in requests:
-                join_request['joined_requests'] = next(filter(lambda x: x['user'] == id,  join_request['join_requests']))
-
+            print('searcing')
+            if len(requests) > 0: 
+                join_requests = []
+                for join_request in requests:
+                    join_request['joined_requests'] = next(filter(lambda x: x['user'] == id,  join_request['join_requests']))
+                    join_requests.push(slice_id(join_request))
+                requests = join_request
             return jsonify({
-                'user_info'        : slice_id(db.users.find_one( { 'email' : email}, { 'password' : 0 , 'token' : 0 } )),
-                'own_proposals'    : slice_ids(db.proposals.find( { 'created_by': id })),
-                'joined_proposals' : slice_ids(db.proposals.find( {'users' : id },  { 'join_requests': 0} )),
-                'requested_proposals'        : slice_ids(requests)
+                'user_info'                  : slice_id(db.users.find_one( { 'email' : email}, { 'password' : 0 , 'token' : 0 } )),
+                'own_proposals'              : slice_ids(db.proposals.find( { 'created_by': id })),
+                'joined_proposals'           : slice_ids(db.proposals.find( {'users' : id },  { 'join_requests': 0} )),
+                'requested_proposals'        : dumps(requests)
             })
         else:
-            return {'status' : 'ERROR', 'code': 'missing_id', 'status_code': 401 }
+            print('ok po niend id')
+            return jsonify({'status' : 'ERROR', 'code': 'missing_id', 'status_code': 401 })
     else:
-        return {'status' : 'ERROR', 'code': 'missing_access_token', 'status_code': 401 }
+        print('ok po niend acc tkn')
+        return jsonify({'status' : 'ERROR', 'code': 'missing_access_token', 'status_code': 401 })
 
 @app.route('/api/get-proposals-by-user/<id>')
 def get_proposal_by_user(id):
@@ -200,7 +208,8 @@ def register():
                 'surname' : user['surname'],
                 'email': user['email'],
                 'password': generate_password_hash(user['password']),
-                'img'  : user.get('img', DEFAULT_USER_IMG),
+                'profile_img'  : user.get('img', DEFAULT_USER_IMG),
+                'imgs' : [],
                 'verified' : False,
                 'logged': False,
                 'token': send_email_confirmation(user['email'])
@@ -277,11 +286,18 @@ def upload_image():
         print('there was an access_token')
         user, id, email = get_user(access_token)
         print('taken user')
-        upload_file(id)
-        return jsonify({ 'status' : 'OK', 'status_code': 200 })
-
+        img = upload_file(id)
+        if img:
+            #TODO: check size of user's imgs
+            db.users.update_one({'_id':ObjectId(id)}, {
+                "$push":{
+                    "imgs" : img
+                }
+            })
+            return jsonify({ 'status' : 'OK', 'status_code': 200 })
+        else:
+            return jsonify({ 'status' : 'ERROR' ,'code' : 'upload_file', 'status_code' : 409 })
     else :
-        print('no access_token')
         return jsonify({ 'status' : 'ERROR' ,'code' : 'user_not_verified', 'status_code' : 401 })
 
 '''
@@ -365,14 +381,11 @@ def allowed_file(filename):
     return file_extension[1:] in ALLOWED_EXTENSIONS
 
 def upload_file(user_dir):
-    print('upload_file')
     if request.method == 'POST':
-        print('hey')
         # check if the post request has the file part
         if 'file' not in request.files:
             print('hey niente', file=sys.stdout)
             return False
-        print('file was in request file')
         file = request.files['file']
         # if user does not select file, browser also
         # submit a empty part without filename
@@ -387,10 +400,11 @@ def upload_file(user_dir):
             print(os.path.dirname(path), file=sys.stdout)
             print('saved', file=sys.stdout)
             file.save(path)
-            return True
+            return path
         print('hey' + str(allowed_file(file.filename)), file=sys.stderr)
     else:
         print('method not was allowed')
+        return False
 
 
 
