@@ -2,6 +2,7 @@ import os
 import logging
 import jwt
 import re
+import sys
 
 from flask                  import Flask, render_template, request, url_for, redirect
 from flask_mail             import Mail, Message
@@ -18,6 +19,8 @@ from bson.json_util         import dumps
 from bson.son               import SON
 from bson.objectid          import ObjectId
 
+logging.basicConfig(level=logging.DEBUG)
+sys.stdout.flush()
 DEFAULT_USER_IMG = 'https://picsum.photos/id/237/200/300'
 MONGO_USR = 'gigibit'
 MONGO_PWD = '7AUUoXT9mpq4M0GB'
@@ -267,13 +270,18 @@ def login():
 
 @app.route('/api/upload-image', methods=['POST'])
 def upload_image():
+    print('entered')
     access_token = request.headers.get('auth-token', None)
+    print('access_token taken')
     if access_token :
+        print('there was an access_token')
         user, id, email = get_user(access_token)
+        print('taken user')
         upload_file(id)
         return jsonify({ 'status' : 'OK', 'status_code': 200 })
 
     else :
+        print('no access_token')
         return jsonify({ 'status' : 'ERROR' ,'code' : 'user_not_verified', 'status_code' : 401 })
 
 '''
@@ -302,16 +310,6 @@ def add_message(json, methods=['GET', 'POST']):
     emit('message', json, broadcast=True, room=json['proposal'])
 
     
-
-if __name__ == '__main__':
-    init_db()
-    socketio.run(app, debug=True)
-
-
-
-
-
-
 
 
 '''
@@ -367,26 +365,38 @@ def allowed_file(filename):
     return file_extension[1:] in ALLOWED_EXTENSIONS
 
 def upload_file(user_dir):
+    print('upload_file')
     if request.method == 'POST':
         print('hey')
         # check if the post request has the file part
         if 'file' not in request.files:
-            flash('No file part')
-            print('hey niente')
+            print('hey niente', file=sys.stdout)
             return False
+        print('file was in request file')
         file = request.files['file']
         # if user does not select file, browser also
         # submit a empty part without filename
         if file.filename == '':
-            print('hey niente')
-            flash('No selected file')
+            print('hey niente', file=sys.stdout)
             return False
         if file and allowed_file(file.filename):
-            print(file.filename)
+            print(file.filename, file=sys.stdout)
             filename = secure_filename(file.filename)
             path = os.path.join(app.config['UPLOAD_FOLDER'], user_dir, filename)
             os.makedirs(os.path.dirname(path), exist_ok=True)
-            print(os.path.dirname(path))
+            print(os.path.dirname(path), file=sys.stdout)
+            print('saved', file=sys.stdout)
             file.save(path)
             return True
-        print('hey' + str(allowed_file(file.filename)))
+        print('hey' + str(allowed_file(file.filename)), file=sys.stderr)
+    else:
+        print('method not was allowed')
+
+
+
+
+
+if __name__ == '__main__':
+   # init_db()
+   # socketio.run(app, debug=True)
+   app.run(host='0.0.0.0', port=3001, debug=True)

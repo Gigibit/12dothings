@@ -4,10 +4,11 @@ import { Observable, of } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Position } from '../core/models/proposal'
 import { AuthService } from './auth.service';
+import { SERVICE_SERVER } from '../config';
 
-const PROPOSALS_CRUD_SERVICE  = 'http://localhost:3001/api/proposals'
-const SINGLE_PROPOSAL_SERVICE = 'http://localhost:3001/api/proposal'
-const JOIN_PROPOSAL_SERVICE   = 'http://localhost:3001/api/join-proposal/'
+const PROPOSALS_CRUD_SERVICE  = SERVICE_SERVER + '/api/proposals'
+const SINGLE_PROPOSAL_SERVICE = SERVICE_SERVER + '/api/proposal'
+const JOIN_PROPOSAL_SERVICE   = SERVICE_SERVER + '/api/join-proposal/'
 
 @Injectable({
   providedIn: 'root'

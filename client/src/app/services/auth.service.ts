@@ -3,10 +3,10 @@ import { HttpClient } from  '@angular/common/http';
 import { BehaviorSubject } from  'rxjs';
 import { Storage } from  '@ionic/storage';
 import { Platform } from '@ionic/angular';
+import { AUTH_SERVER } from '../config';
 
 const TOKEN_KEY = 'auth-token';
 
-const AUTH_SERVER  =  'http://localhost:3001';
 const REGISTER_URL = AUTH_SERVER + '/api/register'
 const LOGIN_URL = AUTH_SERVER + '/api/login'
 

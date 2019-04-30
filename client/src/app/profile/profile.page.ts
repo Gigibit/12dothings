@@ -18,6 +18,7 @@ import { finalize } from 'rxjs/operators';
 })
 export class ProfilePage implements OnInit {
   images = []
+  uri
   ownProposals : Proposal[]
   joinedProposals: Proposal[]
   //requestedProposals: Proposal[]
@@ -40,11 +41,6 @@ export class ProfilePage implements OnInit {
         this.userInfo = data['user_info'] as User
       })
     }
-    
-    loadStoredImages() {
-      this.userService.loadStoredImage( data => this.images = data)
-    }
-    
 
     async presentToast(text) {
       const toast = await this.toastController.create({
@@ -61,13 +57,13 @@ export class ProfilePage implements OnInit {
         buttons: [{
           text: 'Load from Library',
           handler: () => {
-              this.userService.takePicture(PictureSourceType.PHOTOLIBRARY);
+              this.userService.takePicture(PictureSourceType.PHOTOLIBRARY, (uri)=> this.uri = uri);
           }
         },
         {
           text: 'Use Camera',
           handler: () => {
-            this.userService.takePicture(PictureSourceType.CAMERA);
+            this.userService.takePicture(PictureSourceType.CAMERA, (uri)=> this.uri = uri );
           }
         },
         {
@@ -79,38 +75,4 @@ export class ProfilePage implements OnInit {
     await actionSheet.present();
   }
   
-
-
-  updateStoredImages(name) {
-    this.userService.updateStoredImages(name, newEntry=>{
-      this.images = [newEntry, ...this.images];
-      this.ref.detectChanges(); // trigger change detection cycle
-    })
-  }
-  
-  startUpload(imgEntry) {
-   
-  }
-  
-
-  async uploadImageData(formData: FormData) {
-    const loading = await this.loadingController.create();
-    loading.textContent = 'Uploading image...'
-    
-    await loading.present();
-    
-    // this.userService.uploadImageData(formData).pipe(
-    //   finalize(() => {
-    //     loading.dismiss();
-    //   })
-    //   )
-    //   .subscribe(res => {
-    //     if (res['success']) {
-    //       this.presentToast('File upload complete.')
-    //     } else {
-    //       this.presentToast('File upload failed.')
-    //     }
-    //   });
-    // }
-  }
   }

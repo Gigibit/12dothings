@@ -32,6 +32,8 @@ import { File } from '@ionic-native/File/ngx';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
 import { FilePath } from '@ionic-native/file-path/ngx';
  
+import { FileTransfer } from '@ionic-native/file-transfer/ngx'
+
 
 
 const config: SocketIoConfig = { url: 'http://localhost:3001/messages', options: {} };
@@ -68,6 +70,7 @@ const config: SocketIoConfig = { url: 'http://localhost:3001/messages', options:
     File,
     WebView,
     FilePath,
+    FileTransfer,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent]
