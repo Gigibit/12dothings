@@ -55,6 +55,9 @@
     <ion-list>
       <ion-item *ngFor="let proposal of ownProposals">
         {{proposal.name}}, {{proposal.description}}
+        <div *ngFor="let request of proposal.join_requests" (click)="approve(request.user, proposal.id)">
+          {{request.user}}, {{request.state}}
+        </div>
       </ion-item>
     </ion-list>
   </div>

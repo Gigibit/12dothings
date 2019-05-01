@@ -5,6 +5,7 @@ import { User, fromJson } from '../core/models/user';
 import { ToastController, ActionSheetController, Platform, LoadingController } from '@ionic/angular';
 import { PictureSourceType } from '@ionic-native/Camera/ngx';
 import { Location } from '@angular/common';
+import { ProposalService } from '../services/proposal.service';
 
 const COLUMN_COUNT = 4
 
@@ -29,13 +30,13 @@ export class ProfilePage implements OnInit {
     private toastController: ToastController,
     private loadingController: LoadingController,
     private ref: ChangeDetectorRef, 
-    private userService: UserService
+    private userService: UserService,
+    private proposalService: ProposalService
     ) { 
     }
     
     ngOnInit() {
       this.userService.getContext().subscribe(data=>{
-        console.log(data)
         this.ownProposals = data['own_proposals']
         //this.requestedProposals = data['requested_proposals']
         this.joinedProposals = data['joined_proposals']
@@ -94,5 +95,7 @@ export class ProfilePage implements OnInit {
     });
     await actionSheet.present();
   }
-  
+  approve(userToApprove : string, proposalId: string){
+    this.proposalService.approveRequest(userToApprove, proposalId).subscribe(data=>console.log(data))
+  }
 }

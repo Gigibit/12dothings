@@ -9,6 +9,7 @@ import { SERVICE_SERVER } from '../config';
 const PROPOSALS_CRUD_SERVICE  = SERVICE_SERVER + '/api/proposals'
 const SINGLE_PROPOSAL_SERVICE = SERVICE_SERVER + '/api/proposal'
 const JOIN_PROPOSAL_SERVICE   = SERVICE_SERVER + '/api/join-proposal/'
+const APPROVE_REQUEST_SERVICE   = SERVICE_SERVER + '/api/approve-request'
 
 @Injectable({
   providedIn: 'root'
@@ -50,6 +51,15 @@ export class ProposalService {
 
   join(id : string){
     return this.http.post( JOIN_PROPOSAL_SERVICE + id , {}, {
+      headers : this.headers
+    })
+  }
+
+  approveRequest(userToApproveId: string, proposalId: string){
+    return this.http.post( APPROVE_REQUEST_SERVICE , {
+      'user_to_approve' : userToApproveId,
+      'proposal_id' : proposalId
+    }, {
       headers : this.headers
     })
   }

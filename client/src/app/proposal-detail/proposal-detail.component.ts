@@ -3,6 +3,7 @@ import { ProposalService } from '../services/proposal.service';
 import { Platform } from '@ionic/angular';
 import { Proposal, RequestState } from '../core/models/proposal';
 import { ActivatedRoute } from '@angular/router';
+import { User } from '../core/models/user';
 
 @Component({
   selector: 'app-proposal-detail',
@@ -13,7 +14,7 @@ export class ProposalDetailComponent implements OnInit {
   proposalKey: string
   proposal : Proposal
   state : RequestState
-
+  participants : User[]
   constructor(
     private proposalService: ProposalService,
     private activatedRoute: ActivatedRoute
@@ -24,11 +25,12 @@ export class ProposalDetailComponent implements OnInit {
     this.proposalService.getProposalDetail(this.proposalKey).subscribe(data=>{
       this.proposal = data['detail'] as Proposal
       this.state    = data['join_status'] as RequestState
+      console.log(data)
     })
   }
   join(){
     this.proposalService.join(this.proposalKey).subscribe(data=>{
-      console.log(data)
+      this.state = RequestState.PENDING
     })
   }
 }
