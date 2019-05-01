@@ -9,3 +9,14 @@
 @import '~@ionic/angular/css/text-alignment.css';
 @import '~@ionic/angular/css/text-transformation.css';
 @import '~@ionic/angular/css/flex-utils.css';
+
+ion-button, ion-toolbar, ion-searchbar {
+    --ion-color-base: transparent !important;
+    --background: transparent;
+    --color: #777;
+    --background-activated: #32deaf;
+}
+
+ion-title{
+    float:right;
+}

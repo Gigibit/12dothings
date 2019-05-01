@@ -1,14 +1,12 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, NgZone } from '@angular/core';
 import { Proposal } from '../core/models/proposal';
-import { File, FileEntry } from '@ionic-native/File/ngx';
-import { WebView } from '@ionic-native/ionic-webview/ngx';
 import { UserService } from '../services/user.service';
-import { User } from '../core/models/user';
+import { User, fromJson } from '../core/models/user';
 import { ToastController, ActionSheetController, Platform, LoadingController } from '@ionic/angular';
 import { PictureSourceType } from '@ionic-native/Camera/ngx';
-import { finalize } from 'rxjs/operators';
+import { Location } from '@angular/common';
 
-
+const COLUMN_COUNT = 4
 
 
 @Component({
@@ -17,6 +15,8 @@ import { finalize } from 'rxjs/operators';
   styleUrls: ['./profile.page.scss'],
 })
 export class ProfilePage implements OnInit {
+  galleryType ='regular'
+  
   images = []
   uri
   ownProposals : Proposal[]
@@ -24,24 +24,44 @@ export class ProfilePage implements OnInit {
   //requestedProposals: Proposal[]
   userInfo: User 
   constructor(
+    private location: Location,
     private actionSheetController: ActionSheetController, 
     private toastController: ToastController,
     private loadingController: LoadingController,
     private ref: ChangeDetectorRef, 
     private userService: UserService
     ) { 
-  
     }
     
     ngOnInit() {
       this.userService.getContext().subscribe(data=>{
+        console.log(data)
         this.ownProposals = data['own_proposals']
         //this.requestedProposals = data['requested_proposals']
         this.joinedProposals = data['joined_proposals']
-        this.userInfo = data['user_info'] as User
+        this.userInfo = fromJson(data['user_info'])
+        window['uu'] = this.userInfo
+        if(this.userInfo != null && this.userInfo.imgs != null){
+          this.userInfo.imgs.forEach((img, index) => {
+            if(index % COLUMN_COUNT == 0) {
+              let row = [];
+              row.push(img);
+              this.images.push(row);
+            } else {
+              this.images[this.images.length - 1].push(img);
+            }
+          });
+          if(this.images[this.images.length -1].length%COLUMN_COUNT !== 0){
+            for(var i = 0; i < this.images[this.images.length -1].length%COLUMN_COUNT; i++ )
+            this.images[this.images.length - 1].push('');
+          }
+        }
+        else{
+          console.log('data not found')
+        }
       })
     }
-
+    
     async presentToast(text) {
       const toast = await this.toastController.create({
         message: text,
@@ -57,13 +77,13 @@ export class ProfilePage implements OnInit {
         buttons: [{
           text: 'Load from Library',
           handler: () => {
-              this.userService.takePicture(PictureSourceType.PHOTOLIBRARY, (uri)=> this.images.push(uri));
+            this.userService.takePicture(PictureSourceType.PHOTOLIBRARY, (uri)=> this.images.push(uri));
           }
         },
         {
           text: 'Use Camera',
           handler: () => {
-            this.userService.takePicture(PictureSourceType.CAMERA, (uri)=> this.uri = uri );
+            this.userService.takePicture(PictureSourceType.CAMERA, (uri)=> this.images.push(uri) );
           }
         },
         {
@@ -75,4 +95,4 @@ export class ProfilePage implements OnInit {
     await actionSheet.present();
   }
   
-  }
+}

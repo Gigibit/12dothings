@@ -3,11 +3,21 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Place } from '../autocomplete-input/autocomplete-input.component';
 import { ProposalService } from '../services/proposal.service';
 import { PositionType } from '../core/models/proposal';
+import { ModalController } from '@ionic/angular';
 
 
 @Component({
   selector: 'app-create-proposal',
   template: `
+    <ion-header>
+      <ion-toolbar>
+      <ion-button (click)="modalCtrl.dismiss(false)">
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
+      <ion-title>create new proposal, please!</ion-title>
+    </ion-toolbar>
+    </ion-header>
+    <ion-content>
     <form [formGroup]="proposalForm" novalidate>
       <ion-item>
         <ion-label>Name</ion-label>
@@ -19,10 +29,11 @@ import { PositionType } from '../core/models/proposal';
         <ion-label>Description</ion-label>
         <ion-textarea formControlName="description"></ion-textarea>
       </ion-item>
-      <div padding>
-        <ion-button [disabled]="proposalForm.invalid" (click)="create()" type="submit" size="large"  expand="block">Create</ion-button>
-      </div>
     </form>
+    </ion-content>
+    <ion-footer>
+      <ion-button [disabled]="proposalForm.invalid" (click)="create()" size="large"  expand="block">create</ion-button>
+    </ion-footer>
   `,
   styleUrls: ['./create-proposal.component.scss'],
 })
@@ -32,6 +43,7 @@ export class CreateProposalComponent implements OnInit {
   district: Place
   city: string
   constructor( 
+    private modalCtrl: ModalController,
     private proposalsService: ProposalService,
     private formBuilder: FormBuilder ) {
     this.proposalForm = this.formBuilder.group({
@@ -64,7 +76,9 @@ export class CreateProposalComponent implements OnInit {
         coordinates : [Number.parseFloat(this.district.x), Number.parseFloat(this.district.y)]
       }
     }).subscribe(data=>{
-      console.log(data)
+      if(data['status'] == 'OK'){
+        this.modalCtrl.dismiss(true);
+      }
     })
   }
 }

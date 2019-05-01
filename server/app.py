@@ -37,7 +37,7 @@ app  = Flask(__name__, template_folder='./templates')
 app.config['SECRET_KEY'] = 'vnkdjnfjknfl1232#'
 app.config.from_pyfile('config.cfg')
 
-UPLOAD_FOLDER = './static/images/'
+UPLOAD_FOLDER = 'static/images/'
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -85,13 +85,15 @@ def get_user_context():
         print('done token')
         if id and email:
             requests = db.proposals.find( { 'join_requests.user' : id } )
-            print('searcing')
-            if len(requests) > 0: 
+            if requests.count() > 0: 
                 join_requests = []
                 for join_request in requests:
-                    join_request['joined_requests'] = next(filter(lambda x: x['user'] == id,  join_request['join_requests']))
-                    join_requests.push(slice_id(join_request))
-                requests = join_request
+                    try:
+                        join_request['joined_requests'] = next(filter(lambda x: x['user'] == id,  join_request['join_requests']))
+                        join_requests.append(slice_id(join_request))
+                    except StopIteration:
+                        join_request['joined_requests'] = []
+                requests = join_requests
             return jsonify({
                 'user_info'                  : slice_id(db.users.find_one( { 'email' : email}, { 'password' : 0 , 'token' : 0 } )),
                 'own_proposals'              : slice_ids(db.proposals.find( { 'created_by': id })),
@@ -179,8 +181,10 @@ def proposal(id):
             user, user_id, email             = get_user(access_token)        
             requested_proposal = db.proposals.find_one({'_id' : ObjectId(id) })
             if requested_proposal:
-                join_request = next(filter(lambda x: x['user'] == user_id,  requested_proposal['join_requests']))
-                
+                try:
+                    join_request = next(filter(lambda x: x['user'] == user_id,  requested_proposal['join_requests']))
+                except:
+                    join_request = None
                 return jsonify({
                         'detail': slice_id(requested_proposal),
                         'join_status': join_request['state'] if join_request else 'NOT_REQUESTED'
@@ -296,8 +300,10 @@ def upload_image():
             })
             return jsonify({ 'status' : 'OK', 'status_code': 200 })
         else:
+            print('no img no party')
             return jsonify({ 'status' : 'ERROR' ,'code' : 'upload_file', 'status_code' : 409 })
     else :
+        print('no token no party')
         return jsonify({ 'status' : 'ERROR' ,'code' : 'user_not_verified', 'status_code' : 401 })
 
 '''
@@ -397,10 +403,9 @@ def upload_file(user_dir):
             filename = secure_filename(file.filename)
             path = os.path.join(app.config['UPLOAD_FOLDER'], user_dir, filename)
             os.makedirs(os.path.dirname(path), exist_ok=True)
-            print(os.path.dirname(path), file=sys.stdout)
-            print('saved', file=sys.stdout)
             file.save(path)
-            return path
+            print('saved %s'%os.path.dirname(path), file=sys.stdout)
+            return url_for('static', filename=os.path.join('images',user_dir, filename), _external=True)
         print('hey' + str(allowed_file(file.filename)), file=sys.stderr)
     else:
         print('method not was allowed')

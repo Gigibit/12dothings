@@ -25,8 +25,7 @@ export class UserService {
     private camera: Camera,
     private auth: AuthService
     ) {
-      
-      
+      this.headers = this.headers.set('auth-token', this.auth.token())
     }
     
     getContext(){
@@ -58,7 +57,6 @@ export class UserService {
         }
         else{
           this.uploadUri(imageData)
-
         }
         if(onUri){
           onUri(imageData)
@@ -66,8 +64,7 @@ export class UserService {
       }, onError || console.log );
     }
     uploadUri(uri, onSuccess: (data)=>void = data=>{ console.log(data) }){
-      console.log(this.headers)
-      console.log(this.auth.token())
+      
       let options: FileUploadOptions = {
         fileKey: 'file',
         chunkedMode: false,
@@ -85,7 +82,9 @@ export class UserService {
       .catch( (err) => console.log(err));
     }
     uploadImageData(formData: FormData) {
-      return this.http.post(UPLOAD_URL, formData).subscribe(data=> console.log(data));
+      return this.http.post(UPLOAD_URL, formData,{
+        headers: this.headers
+      }).subscribe(data=> console.log(data));
     }
     
     dataURItoBlob(dataURI) {
