@@ -1,6 +1,9 @@
 <ion-header>
   <ion-toolbar color="primary">
-    <ion-title>Chatkit Demo</ion-title>
+      <ion-button (click)="location.back()">
+          <ion-icon name="ios-arrow-back"></ion-icon>
+      </ion-button>
+  <ion-title>register</ion-title>
   </ion-toolbar>
 </ion-header>
   <form #f="ngForm" (ngSubmit)="register(f)">

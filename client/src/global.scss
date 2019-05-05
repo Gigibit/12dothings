@@ -14,9 +14,22 @@ ion-button, ion-toolbar, ion-searchbar {
     --ion-color-base: transparent !important;
     --background: transparent;
     --color: #777;
-    --background-activated: #32deaf;
+    --background-activated: #2d32aa ;
 }
 
 ion-title{
     float:right;
+}
+
+ion-range{
+    --knob-size: 25px;
+    --bar-height: 4px;
+    --height : 50px;
+    --knob-background: #56CCF2;  /* fallback for old browsers */
+    
+    --bar-background-active : rgb(174, 213, 226);  /* fallback for old browsers */
+    --bar-background-active : -webkit-linear-gradient(to right, #2F80ED, #56CCF2);  /* Chrome 10-25, Safari 5.1-6 */
+    --bar-background-active : linear-gradient(to right, #2F80ED, #56CCF2); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    --pin-background : #56CCF2;
+
 }

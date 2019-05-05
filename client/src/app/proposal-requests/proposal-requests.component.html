@@ -1,0 +1,28 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-button (click)="modalCtrl.dismiss(somethingChanged)">
+      <ion-icon name="close"></ion-icon>
+    </ion-button>
+    <ion-title>requests</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-list #slidingList >
+    <ion-item-sliding *ngFor="let request of notApprovedRequests()" #slidingItem (click)="showPopupAllowDeny(request)">
+        <ion-item>
+          <app-user-avatar [userInfo]="request.user"></app-user-avatar>
+          {{request.user.name}}
+        </ion-item>
+        <ion-item-options (ionSwipe)="deny(slidingItem, proposal)">
+          <ion-button color="primary" (click)="allow(slidingItem, request)">
+            <ion-icon name="checkmark"></ion-icon>
+            Approve
+          </ion-button>
+          <ion-button color="danger" (click)="deny(slidingItem, request)">
+            <ion-icon name="trash"></ion-icon>
+            Reject
+          </ion-button>
+        </ion-item-options>
+      </ion-item-sliding>
+  </ion-list>
+</ion-content>

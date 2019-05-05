@@ -29,7 +29,16 @@ import { ModalController } from '@ionic/angular';
         <ion-label>Description</ion-label>
         <ion-textarea formControlName="description"></ion-textarea>
       </ion-item>
+
     </form>
+    <ion-item>
+      <ion-label>Accept all request</ion-label>
+      <ion-checkbox slot="end" [(ngModel)]="requestsAutoaccept"></ion-checkbox>
+    </ion-item>
+    <ion-item>
+      <ion-label>Use your own photo!</ion-label>
+      <ion-checkbox slot="end" [(ngModel)]="useOwnerPhoto"></ion-checkbox>
+    </ion-item>
     </ion-content>
     <ion-footer>
       <ion-button [disabled]="proposalForm.invalid" (click)="create()" size="large"  expand="block">create</ion-button>
@@ -42,6 +51,9 @@ export class CreateProposalComponent implements OnInit {
   selectedCity : string
   district: Place
   city: string
+  requestsAutoaccept = true
+  useOwnerPhoto = true
+
   constructor( 
     private modalCtrl: ModalController,
     private proposalsService: ProposalService,
@@ -51,6 +63,7 @@ export class CreateProposalComponent implements OnInit {
       city: ['', Validators.required],
       district: ['', Validators.required],
       description: [''],
+
     });
   }
 
@@ -71,6 +84,8 @@ export class CreateProposalComponent implements OnInit {
     this.proposalsService.createProposal({
       title: this.proposalForm.controls['title'].value,
       description : this.proposalForm.controls['description'].value,
+      useOwnerPhoto: this.useOwnerPhoto,
+      autoAcceptRequest : this.requestsAutoaccept,
       position: {
         type : PositionType.POINT,
         coordinates : [Number.parseFloat(this.district.x), Number.parseFloat(this.district.y)]

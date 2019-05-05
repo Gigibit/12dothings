@@ -1,7 +1,7 @@
 #profileImage{
     width: 80px;
     height: 80px;
-    margin: 30px auto;
+    margin: 0 auto;
     border: 2px solid #222;
 }
 
@@ -10,11 +10,14 @@
     text-align: center;
     font-size: 19px;
     font-weight: bold;
-    margin: 0 auto;
+    margin: 30px auto;
     display: block;
 }
 .gallery{
     border-top: 0.5px solid #ccc;
+    padding-top: 30px;
+    margin-top: 30px;
+
 }
 
 .one-image {

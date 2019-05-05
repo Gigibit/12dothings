@@ -5,9 +5,12 @@ import { Camera, CameraOptions, PictureSourceType } from '@ionic-native/Camera/n
 import { AUTH_SERVER, SERVICE_SERVER } from '../config';
 import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-native/file-transfer/ngx'
 import { Platform } from '@ionic/angular';
+import { User } from '../core/models/user';
 
 const CONTEXT = AUTH_SERVER + '/api/get-context'
 const UPLOAD_URL = SERVICE_SERVER + "/api/upload-image"
+const USER_INFO = SERVICE_SERVER + "/api/get-user-info/"
+const PROPS_HIM = SERVICE_SERVER + "/api/props/"
 const STORAGE_KEY = 'experience_key_img';
 
 @Injectable({
@@ -111,6 +114,16 @@ export class UserService {
       n = d.getTime(),
       newFileName = n + ".jpg";
       return newFileName;
+    }
+    getUserInfo(userId: string){
+      return this.http.get(USER_INFO + userId,{
+        headers : this.headers
+      })
+    }
+    propsHim(userInfo: User){
+      return this.http.post(PROPS_HIM + userInfo.id, {},{
+        headers: this.headers 
+      })
     }
   }
   

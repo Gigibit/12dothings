@@ -9,31 +9,30 @@
   </ion-toolbar>
 </ion-header>
 
+<ion-content>
+  <ion-range  class="col-md-12" pin="true" [(ngModel)]="maxDistance"  min="50" max="100000" step="2">
+    <ion-icon size="small" slot="start" name="walk"></ion-icon>
+    <ion-icon slot="end" name="walk"></ion-icon>
+  </ion-range>
+  <ion-button id="get-proposal-button" (click)="getGeolocation()">
+    get all
+  </ion-button> 
+  <ion-list>
+    <ion-card  *ngFor="let proposal of proposals" routerDirection="forward">
+      <ion-card-header>
+        <app-user-avatar [userInfo]="proposal.ownerInfo"></app-user-avatar>
+        <div class="userInfo" >
+          <ion-card-subtitle [routerLink]="['/proposal-detail/', proposal.id]">{{proposal.ownerInfo?.name}} {{proposal.ownerInfo?.surname}}</ion-card-subtitle>
+          <ion-card-title  [routerLink]="['/proposal-detail/', proposal.id]">{{proposal.title}}</ion-card-title>
+        </div>
+      </ion-card-header>
+      <ion-card-content [routerLink]="['/proposal-detail/', proposal.id]" >
+        <ion-img class="proposalImg" [src]="proposal.img"></ion-img>
+        {{proposal.description}}
+      </ion-card-content>
+    </ion-card>
+  </ion-list>
   
-  <div class="row">
-    <ion-range  class="col-md-12" pin="true" [(ngModel)]="maxDistance"  min="50" max="100000" step="2">
-      <ion-icon size="small" slot="start" name="walk"></ion-icon>
-      <ion-icon slot="end" name="walk"></ion-icon>
-    </ion-range>
-    <ion-button id="get-proposal-button" (click)="getGeolocation()">
-      get all
-    </ion-button>
-  </div>
-  <div>
-    <ion-list #slidingList>
-      <ion-item-sliding *ngFor="let proposal of proposals" #slidingItem>
-        <ion-item [routerLink]="['/proposal-detail/', proposal.id]" routerDirection="forward">
-          <ion-label>{{proposal.title}}</ion-label>
-        </ion-item>
-        <ion-item-options (ionSwipe)="deleteItem(slidingItem, proposal)">
-          <ion-button color="danger" (click)="deleteItem(slidingItem, proposal)">
-            <ion-icon name="trash"></ion-icon>
-            Delete
-          </ion-button>
-        </ion-item-options>
-      </ion-item-sliding>
-    </ion-list>
-  </div>
   
   
   
@@ -60,6 +59,9 @@
       <br>Address : {{geoAddress }}
     </p>
   </div> -->
-  <ion-button size="large" (click)="openModal()">
+</ion-content>
+<ion-footer>
+  <ion-button fill="clear" expand="full" (click)="openModal()">
     <ion-icon name="add"></ion-icon>
   </ion-button>
+</ion-footer>

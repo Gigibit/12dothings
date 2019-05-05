@@ -1,13 +1,11 @@
 import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { ProposalService } from '../services/proposal.service';
-import { Proposal, PositionType } from '../core/models/proposal';
+import { Proposal, PositionType, ProposalMapper } from '../core/models/proposal';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { NativeGeocoder,NativeGeocoderOptions, NativeGeocoderResult } from '@ionic-native/native-geocoder/ngx';
 import { IonItemSliding, ModalController } from '@ionic/angular';
 import { CreateProposalComponent } from '../create-proposal/create-proposal.component';
 import { OverlayEventDetail } from '@ionic/core';
-import { Router } from '@angular/router';
-
 
 @Component({
   selector: 'app-proposals',
@@ -15,17 +13,6 @@ import { Router } from '@angular/router';
   styleUrls: ['./proposals.component.scss'],
 })
 export class ProposalsComponent {
-  @ViewChild('slidingItem') slidingList;
- 
-  async deleteItem(slidingItem: IonItemSliding, proposal: Proposal) {
-    slidingItem.close(); 
-    const index = this.proposals.indexOf(proposal, 0);
-    if (index > -1) {
-      this.proposals.splice(index, 1);
-    }
-    // await this.itemService.deleteItem(item);
-  }
-  
   proposals: Proposal[]
    
   geoLatitude: number;
@@ -62,8 +49,7 @@ export class ProposalsComponent {
           type: PositionType.POINT,
           coordinates : [this.geoLongitude, this.geoLatitude]
         }, this.maxDistance).subscribe(data=>{
-          console.log(data)
-          this.ngZone.run(()=>this.proposals = data as Proposal[])
+          this.proposals = ProposalMapper.fromJsonArray(data)
         })
         // this.getGeoencoder(this.geoLatitude,this.geoLongitude);
        }).catch((error) => {

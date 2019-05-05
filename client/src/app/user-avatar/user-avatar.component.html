@@ -1,0 +1,5 @@
+<div class="userInfo" *ngIf="userInfo" [routerLink]="['/view-user-profile/', userInfo.id]">
+  <ion-avatar id="profileImage" >
+    <ion-img [src]="userInfo.profileImg" ></ion-img>
+  </ion-avatar>
+</div>

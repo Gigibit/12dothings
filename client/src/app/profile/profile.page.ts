@@ -1,11 +1,14 @@
 import { Component, OnInit, ChangeDetectorRef, NgZone } from '@angular/core';
-import { Proposal } from '../core/models/proposal';
+import { Proposal, ProposalMapper } from '../core/models/proposal';
 import { UserService } from '../services/user.service';
-import { User, fromJson } from '../core/models/user';
-import { ToastController, ActionSheetController, Platform, LoadingController } from '@ionic/angular';
+import { User, UserMapper } from '../core/models/user';
+import { ToastController, ActionSheetController, Platform, LoadingController, ModalController } from '@ionic/angular';
 import { PictureSourceType } from '@ionic-native/Camera/ngx';
 import { Location } from '@angular/common';
 import { ProposalService } from '../services/proposal.service';
+import { ProposalRequestsComponent } from '../proposal-requests/proposal-requests.component';
+import { OverlayEventDetail } from '@ionic/core';
+import { RequestState } from '../core/models/request';
 
 const COLUMN_COUNT = 4
 
@@ -16,8 +19,7 @@ const COLUMN_COUNT = 4
   styleUrls: ['./profile.page.scss'],
 })
 export class ProfilePage implements OnInit {
-  galleryType ='regular'
-  
+  section = 'proposals'
   images = []
   uri
   ownProposals : Proposal[]
@@ -28,6 +30,7 @@ export class ProfilePage implements OnInit {
     private location: Location,
     private actionSheetController: ActionSheetController, 
     private toastController: ToastController,
+    private modalController: ModalController,
     private loadingController: LoadingController,
     private ref: ChangeDetectorRef, 
     private userService: UserService,
@@ -37,12 +40,13 @@ export class ProfilePage implements OnInit {
     
     ngOnInit() {
       this.userService.getContext().subscribe(data=>{
-        this.ownProposals = data['own_proposals']
+        console.log(data)
+        this.ownProposals = ProposalMapper.fromJsonArray(data['own_proposals'])
         //this.requestedProposals = data['requested_proposals']
         this.joinedProposals = data['joined_proposals']
-        this.userInfo = fromJson(data['user_info'])
-        window['uu'] = this.userInfo
-        if(this.userInfo != null && this.userInfo.imgs != null){
+        const info = UserMapper.fromJson(data['user_info'])
+        if(this.userInfo == null && info != null && info.imgs != null ){
+          this.userInfo = info
           this.userInfo.imgs.forEach((img, index) => {
             if(index % COLUMN_COUNT == 0) {
               let row = [];
@@ -58,7 +62,7 @@ export class ProfilePage implements OnInit {
           }
         }
         else{
-          console.log('data not found')
+          console.log('data not found or user already loaded')
         }
       })
     }
@@ -95,7 +99,36 @@ export class ProfilePage implements OnInit {
     });
     await actionSheet.present();
   }
-  approve(userToApprove : string, proposalId: string){
-    this.proposalService.approveRequest(userToApprove, proposalId).subscribe(data=>console.log(data))
+  async onProposalRequestsClick(proposal: Proposal){
+    if( proposal.joinRequests != null && 
+        proposal.joinRequests.filter( value => value.state == RequestState.PENDING ).length > 0
+      ){
+      const modal =  await this.modalController.create({
+        component: ProposalRequestsComponent,
+        componentProps: {
+          joinRequests: proposal.joinRequests,
+        }
+     });
+     modal.onDidDismiss().then((hasDoneSomethingOverlay:OverlayEventDetail)=>{
+        if(hasDoneSomethingOverlay.data){
+          this.ownProposals = []
+          this.ngOnInit()
+        }
+      });
+     modal.present();
+    }
+    else{
+      let toast = await this.toastController.create({
+          message: 'There are no pending requests!',
+          duration: 3000,
+          position: 'top'
+      })
+      toast.present()
+    }
+   
   }
+
+
+
+
 }

@@ -10,6 +10,7 @@ const PROPOSALS_CRUD_SERVICE  = SERVICE_SERVER + '/api/proposals'
 const SINGLE_PROPOSAL_SERVICE = SERVICE_SERVER + '/api/proposal'
 const JOIN_PROPOSAL_SERVICE   = SERVICE_SERVER + '/api/join-proposal/'
 const APPROVE_REQUEST_SERVICE   = SERVICE_SERVER + '/api/approve-request'
+const DENY_REQUEST_SERVICE   = SERVICE_SERVER + '/api/deny-request'
 
 @Injectable({
   providedIn: 'root'
@@ -24,8 +25,13 @@ export class ProposalService {
     this.headers = this.headers.set('auth-token', auth.token());
   }
 
-  
+           
   createProposal(proposal: Proposal): Observable<any>{
+
+    let proposalMap = proposal
+    proposalMap['accept_all_request'] = proposal.useOwnerPhoto
+    proposalMap['use_owner_photo'] = proposal.autoAcceptRequest
+
     return this.http.post(PROPOSALS_CRUD_SERVICE, proposal,{
       headers : this.headers
     })
@@ -55,7 +61,7 @@ export class ProposalService {
     })
   }
 
-  approveRequest(userToApproveId: string, proposalId: string){
+  approveRequest(proposalId: string, userToApproveId: string){
     return this.http.post( APPROVE_REQUEST_SERVICE , {
       'user_to_approve' : userToApproveId,
       'proposal_id' : proposalId
@@ -63,5 +69,12 @@ export class ProposalService {
       headers : this.headers
     })
   }
-
+  denyRequest(proposalId: string, userToApproveId: string){
+    return this.http.post( DENY_REQUEST_SERVICE , {
+      'user_to_approve' : userToApproveId,
+      'proposal_id' : proposalId
+    }, {
+      headers : this.headers
+    })
+  }
 }

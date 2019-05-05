@@ -6,6 +6,8 @@ import { Routes, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 
 import { ProfilePage } from './profile.page';
+import { ProposalRequestsComponent } from '../proposal-requests/proposal-requests.component';
+import { UserAvatarComponent } from '../user-avatar/user-avatar.component';
 
 const routes: Routes = [
   {
@@ -15,12 +17,14 @@ const routes: Routes = [
 ];
 
 @NgModule({
+  entryComponents: [ProposalRequestsComponent],
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
     RouterModule.forChild(routes)
   ],
-  declarations: [ProfilePage]
+  exports:[ UserAvatarComponent ],
+  declarations: [ ProfilePage, ProposalRequestsComponent, UserAvatarComponent ]
 })
 export class ProfilePageModule {}

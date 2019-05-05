@@ -32,7 +32,10 @@ import { File } from '@ionic-native/File/ngx';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
 import { FilePath } from '@ionic-native/file-path/ngx';
  
-import { FileTransfer } from '@ionic-native/file-transfer/ngx'
+import { FileTransfer } from '@ionic-native/file-transfer/ngx';
+import { UserAvatarComponent } from './user-avatar/user-avatar.component';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/compiler/src/core';
+import { ProfilePageModule } from './profile/profile.module';
 
 
 
@@ -55,6 +58,7 @@ const config: SocketIoConfig = { url: 'http://localhost:3001/messages', options:
     HttpClientModule,
     FormsModule,
     LoginPageModule,
+    ProfilePageModule,
     RegisterPageModule,
     ReactiveFormsModule,
     IonicStorageModule.forRoot(),

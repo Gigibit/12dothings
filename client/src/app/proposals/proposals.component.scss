@@ -4,3 +4,18 @@
     display: block;
     width: 50%;
 }
+.proposalImg{
+    max-width: 60%;
+    margin: 0 auto;
+}
+ion-card{
+    outline: none;
+}
+app-user-avatar{
+    width: 50px;
+    height: 50px;
+    float: left;
+}
+.userInfo{
+    margin-left: 65px;
+}

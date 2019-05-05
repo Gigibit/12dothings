@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ProposalService } from '../services/proposal.service';
-import { Platform } from '@ionic/angular';
-import { Proposal, RequestState } from '../core/models/proposal';
+import { Proposal, ProposalMapper } from '../core/models/proposal';
 import { ActivatedRoute } from '@angular/router';
-import { User } from '../core/models/user';
+import { User, UserMapper } from '../core/models/user';
+import { Location } from '@angular/common';
+import { RequestState } from '../core/models/request';
 
 @Component({
   selector: 'app-proposal-detail',
@@ -16,6 +17,7 @@ export class ProposalDetailComponent implements OnInit {
   state : RequestState
   participants : User[]
   constructor(
+    private location: Location,
     private proposalService: ProposalService,
     private activatedRoute: ActivatedRoute
   ) { }
@@ -23,9 +25,10 @@ export class ProposalDetailComponent implements OnInit {
   ngOnInit() {
     this.proposalKey = this.activatedRoute.snapshot.paramMap.get('id');
     this.proposalService.getProposalDetail(this.proposalKey).subscribe(data=>{
-      this.proposal = data['detail'] as Proposal
-      this.state    = data['join_status'] as RequestState
       console.log(data)
+      this.proposal = ProposalMapper.fromJson(data['detail'])
+      this.state    = data['join_status'] as RequestState
+      this.participants = UserMapper.fromJsonArray(data['users'])
     })
   }
   join(){

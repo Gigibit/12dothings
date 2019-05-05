@@ -1,0 +1,33 @@
+<ion-header>
+  <ion-toolbar>
+      <ion-button (click)="location.back()">
+        <ion-icon name="ios-arrow-back"></ion-icon>
+      </ion-button>
+    <ion-title>view-user-profile</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="userInfo" *ngIf="userInfo">
+    <ion-label class="user-name">{{userInfo?.name}} {{userInfo?.surname}}</ion-label>
+    <ion-avatar id="profileImage" >
+      <ion-img [src]="userInfo.profileImg" ></ion-img>
+    </ion-avatar>
+    <ion-button (click)="props()">
+        <ion-icon name="heart"></ion-icon>
+    </ion-button>
+  </div>
+  
+  <div class="gallery">
+    <!-- Responsive Layout with Ion Grid-->
+    <ion-grid>
+      <ion-row *ngFor="let rowData of images; index as pos">
+        <ion-col col-6 col-md-4 col-xl-3 *ngFor="let img of rowData; index as pos">
+          <div class="image-container">
+            <ion-img *ngIf="img" [src]="img"></ion-img>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+</ion-content>

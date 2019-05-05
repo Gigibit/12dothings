@@ -47,8 +47,9 @@ cors        = CORS(app, resources={r"/api/*": {"origins": "*"}})
 socketio    = SocketIO(app)
 mail        = Mail(app)
 
-USER_FOR_OTHER = {'password': 0, 'token':0 }
-USER_FOR_USER= {'password': 0, 'token':0 }
+USER_FOR_OTHER      = {'password': 0, 'token':0, 'verified' : 0 }
+USER_FOR_HIM        = {'password': 0, 'token':0,  'verified' : 0 }
+USER_FOR_SYNTHESIS  = {'password': 0, 'token':0, 'email':0, 'imgs':0, 'verified': 0 }
 
 
 #project_dir = os.path.dirname(os.path.abspath(__file__))
@@ -95,14 +96,14 @@ def get_user_context():
                     except StopIteration:
                         join_request['joined_requests'] = []
                 requests = join_requests
+            
             return jsonify({
-                'user_info'                  : slice_id(db.users.find_one( { 'email' : email}, USER_FOR_USER )),
+                'user_info'                  : slice_id(db.users.find_one( { 'email' : email}, USER_FOR_HIM )),
                 'own_proposals'              : slice_ids(db.proposals.find( { 'created_by': id })),
                 'joined_proposals'           : slice_ids(db.proposals.find( {'users' : id },  { 'join_requests': 0} )),
                 'requested_proposals'        : dumps(requests)
             })
         else:
-            print('ok po niend id')
             return jsonify({'status' : 'ERROR', 'code': 'missing_id', 'status_code': 401 })
     else:
         print('ok po niend acc tkn')
@@ -130,17 +131,33 @@ def proposals():
                             ])
                         }
                     }
-            return dumps([slice_id(x) for x in db.proposals.find(query)])
+            proposals = db.proposals.find(query)
+
+            return dumps([slice_id(x) for x in proposals ])
         else:    
             return dumps([slice_id(x) for x in db.proposals.find({})])
 
     elif request.method == 'POST':
         access_token = request.headers.get('auth-token', None)
         if access_token:
-            proposal = request.get_json()
-            proposal['created_by'] = decode(from_jwt(access_token)['id'])
+            proposal_request = request.get_json()
+            user, owner_id, email             = get_user(access_token)        
+            #TODO: map all the fields needed
+            proposal = proposal_request
+            proposal['created_by'] = owner_id
+            proposal['owner_info'] = slice_id(db.users.find_one({'_id':ObjectId(owner_id)}, USER_FOR_SYNTHESIS))
             proposal['users'] = []
             proposal['join_requests'] = []
+            
+            if proposal_request.get('use_owner_photo', False):
+                proposal['img'] = proposal['owner_info']['profile_img']
+            elif proposal_request.get('proposal_img'):
+                img = upload_file(owner_id)
+                proposal['img'] = img
+            
+            proposal['accept_all_request'] = proposal_request.get('accept_all_request', False)
+
+
             result = db.proposals.insert_one(proposal)
             return jsonify({
                     'status': 'OK',
@@ -155,15 +172,17 @@ def proposals():
 @app.route('/api/join-proposal/<id>', methods=["POST"])
 def join(id):
     access_token = request.headers.get('auth-token', None)
-    if access_token :
-        jwt             = from_jwt(access_token)
-        if jwt['id'] and jwt['email']:
-            user_id = decode(jwt['id'])
-            #TODO insert users thumbnail, name and some basic info
+    if access_token:
+        user, user_id, email             = get_user(access_token)        
+        if user and user_id:
+            print(user_id)
+            user = db.users.find_one({'_id': ObjectId(user_id)}, USER_FOR_OTHER)
+            pprint(ObjectId(id))
             db.proposals.update_one( { '_id' : ObjectId(id) }, {
                 '$addToSet':{
                     'join_requests' : {
-                        'user'  : user_id,
+                        'proposal_id': id,
+                        'user'  : slice_id(user),
                         'state' : 'PENDING'
                     }
                 }
@@ -181,12 +200,15 @@ def proposal(id):
         if access_token:
             user, user_id, email             = get_user(access_token)        
             requested_proposal = db.proposals.find_one({'_id' : ObjectId(id) })
-            users = db.users.find({'_id': { '$in' : requested_proposal['users']}}, USER_FOR_OTHER)
+            print(requested_proposal['users'])
+            users = db.users.find({'_id': { '$in' : [ ObjectId(id) for id in requested_proposal['users'] ] }}, USER_FOR_OTHER)
             if requested_proposal:
+                pprint(requested_proposal)
                 try:
-                    join_request = next(filter(lambda x: x['user'] == user_id,  requested_proposal['join_requests']))
-                except:
+                    join_request = next(filter(lambda x: x['user']['id'] == user_id,  requested_proposal['join_requests']))
+                except :
                     join_request = None
+                pprint(join_request)
                 return jsonify({
                         'users': slice_ids(users),
                         'detail': slice_id(requested_proposal),
@@ -204,36 +226,25 @@ def proposal(id):
 def login_user(check_user):
     pass
 
+
+@app.route('/api/deny-request', methods=['POST'])
+def deny_request():
+    return edit_request_state('DENIED')
+
 @app.route('/api/approve-request', methods=['POST'])
 def approve_request():
+    return edit_request_state('APPROVED')
+        
+
+@app.route('/api/get-user-info/<id>', methods=['GET'])
+def get_user_info(id):
     access_token = request.headers.get('auth-token', None)
     if access_token :
         user, id, email = get_user(access_token)
-        request_body = request.get_json()
-        proposal_id     = request_body['proposal_id']
-        user_to_approve = request_body['user_to_approve']
-        proposal = db.proposals.find_one({'_id': ObjectId(proposal_id)})
-        if proposal['created_by'] == id:
-            if user_to_approve not in proposal['users']:
-                try:
-                    request_index = [ request['user'] for request in proposal['join_requests'] ].index(user_to_approve)
-                    proposal['join_requests'][request_index]['state'] = 'APPROVED'
-                    
-                    proposal['users'].append(user_to_approve)
-                    db.proposals.update_one({'_id':ObjectId(proposal_id)}, {'$set' :{
-                        'join_requests' : proposal['join_requests'],
-                        'users': proposal['users']
-                    }})
-                    return jsonify({'status': 'OK', 'status_code':200})
-                except ValueError:
-                    return jsonify({'status': 'ERROR', 'code': 'user_not_found_in_join_requests', 'status_code': 400 })
-            else 
-                return jsonify({'status': 'ERROR', 'code': 'user_already_approved', 'status_code': 409 })
-        else:
-            return Responses.unauthorized()
-    else :
+        return dumps(db.users.find_one({'_id' : ObjectId(id)}, USER_FOR_OTHER))
+    else:
         return Responses.unauthorized()
-        
+
 
 
 @app.route('/api/register', methods=['POST'])
@@ -248,6 +259,8 @@ def register():
                 'email': user['email'],
                 'password': generate_password_hash(user['password']),
                 'profile_img'  : user.get('img', DEFAULT_USER_IMG),
+                #TODO use ffmpeg to reduce size
+                'thumbnail'    : user.get('img',DEFAULT_USER_IMG),
                 'imgs' : [],
                 'verified' : False,
                 'logged': False,
@@ -256,7 +269,7 @@ def register():
             return jsonify({ 'status' : 'OK', 'status_code' : 200 })
         else:
             return jsonify({'status' : 'ERROR', 'code': 'user_already_registered', 'status_code' : 409})
-        
+
     return jsonify({ 'status' : 'ERROR', 'status_code' : 400 })
 
 
@@ -363,7 +376,38 @@ def add_message(json, methods=['GET', 'POST']):
     emit('message', json, broadcast=True, room=json['proposal'])
 
     
+def edit_request_state(state):
+    access_token = request.headers.get('auth-token', None)
+    if access_token :
+        user, id, email = get_user(access_token)
+        request_body = request.get_json()
+        pprint(request_body)
+        proposal_id     = request_body['proposal_id']
+        user_to_approve = request_body['user_to_approve']
+        proposal = db.proposals.find_one({'_id': ObjectId(proposal_id)})
+        if proposal['created_by'] == id:
+            if user_to_approve not in proposal['users']:
+                try:
 
+                    request_index = [ request['user']['id'] for request in proposal['join_requests'] ].index(user_to_approve)
+                    pprint(request_index)
+
+                    proposal['join_requests'][request_index]['state'] = state
+                    
+                    proposal['users'].append(user_to_approve)
+                    db.proposals.update_one({'_id':ObjectId(proposal_id)}, {'$set' :{
+                        'join_requests' : proposal['join_requests'],
+                        'users': proposal['users']
+                    }})
+                    return jsonify({'status': 'OK', 'status_code':200})
+                except ValueError:
+                    return jsonify({'status': 'ERROR', 'code': 'user_not_found_in_join_requests', 'status_code': 400 })
+            else:
+                return jsonify({'status': 'ERROR', 'code': 'user_already_approved', 'status_code': 409 })
+        else:
+            return Responses.unauthorized()
+    else :
+        return Responses.unauthorized()
 
 '''
 UTILS

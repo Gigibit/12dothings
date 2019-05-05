@@ -1,34 +1,67 @@
 <ion-header>
   <ion-toolbar>
     <ion-button (click)="location.back()">
-        <ion-icon name="ios-arrow-back"></ion-icon>
-      </ion-button>
+      <ion-icon name="ios-arrow-back"></ion-icon>
+    </ion-button>
     <ion-title>profile</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
   <div class="userInfo" *ngIf="userInfo">
-    <ion-label class="user-name">{{userInfo.name}} {{userInfo.surname}}</ion-label>
     <ion-avatar id="profileImage" >
       <ion-img [src]="userInfo.profileImg" ></ion-img>
     </ion-avatar>
+    <ion-label class="user-name">{{userInfo.name}} {{userInfo.surname}}</ion-label>
   </div>
   
-  <h3 *ngIf="images == null || images.length == 0" text-center>please select image to convince others to participate and get involved!</h3>
-  <div [ngSwitch]="galleryType" class="gallery">
-    <!-- Responsive Layout with Ion Grid-->
-    <ion-grid *ngSwitchCase="'regular'">
-      <ion-row *ngFor="let rowData of images; index as pos">
-        <ion-col col-6 col-md-4 col-xl-3 *ngFor="let img of rowData; index as pos">
-          <div class="image-container">
-            <ion-img *ngIf="img" [src]="img"></ion-img>
-          </div>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
+  <ion-segment [(ngModel)]="section">
+    <ion-segment-button value="proposals"> Proposals </ion-segment-button>
+    <ion-segment-button value="gallery"  >  Photos   </ion-segment-button>
+  </ion-segment>  
+  
+  <div [ngSwitch]="section" class="gallery">
+    
+    <div *ngSwitchCase="'proposals'" >
+      <div id="own-proposals-section" *ngIf="ownProposals && ownProposals.length > 0 ">
+        <ion-list-header>        
+          <ion-label>created by you</ion-label>
+        </ion-list-header>
+        
+        <ion-list>
+          <ion-item *ngFor="let proposal of ownProposals" (click)="onProposalRequestsClick(proposal)">
+            {{proposal.title}}, {{proposal.description}}
+          </ion-item>
+        </ion-list>
+      </div>
+      
+      <div id="joined-section" *ngIf="joinedProposals && joinedProposals.length > 0 ">
+        <ion-list-header>
+          <ion-label>joined by you</ion-label>
+        </ion-list-header>
+        <ion-list>
+          <ion-item *ngFor="let proposal of joinedProposals" [routerLink]="['/proposal-detail/', proposal.id]" >
+            {{proposal.title}}, {{proposal.description}}
+          </ion-item>
+        </ion-list>
+      </div>
+    </div>
+    
+    
+    <h3 *ngIf="images?.length == 0" text-center>please select image to convince others to participate and get involved!</h3>
+    <div *ngSwitchCase="'gallery'" class="gallery">
+      <ion-grid>
+        <ion-row *ngFor="let rowData of images; index as pos">
+          <ion-col col-6 col-md-4 col-xl-3 *ngFor="let img of rowData; index as pos">
+            <div class="image-container">
+              <ion-img *ngIf="img" [src]="img"></ion-img>
+            </div>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </div>
   </div>
-
+  
   
   
   <!-- <ion-list>
@@ -47,43 +80,10 @@
   
   
   
-  
-  
-  
-  <div id="own-proposals-section" *ngIf="ownProposals && ownProposals.length > 0 ">
-    <ion-title>created by you</ion-title>
-    <ion-list>
-      <ion-item *ngFor="let proposal of ownProposals">
-        {{proposal.name}}, {{proposal.description}}
-        <div *ngFor="let request of proposal.join_requests" (click)="approve(request.user, proposal.id)">
-          {{request.user}}, {{request.state}}
-        </div>
-      </ion-item>
-    </ion-list>
-  </div>
-  
-  <div id="joined-section" *ngIf="joinedProposals && joinedProposals.length > 0 ">
-    <ion-title>joined by you</ion-title>
-    <ion-list>
-      <ion-item *ngFor="let proposal of joinedProposals">
-        {{proposal.name}}, {{proposal.description}}
-      </ion-item>
-    </ion-list>
-  </div>
-  
-  <!-- <div id="requested-section" *ngIf="requestedProposals && requestedProposals.length > 0 ">
-    <ion-title>requested by you</ion-title>
-    <ion-list>
-      <ion-item *ngFor="let proposal of requestedProposals">
-        {{proposal.name}}, {{proposal.description}}
-      </ion-item>
-    </ion-list>
-  </div> -->
-  
 </ion-content>
 <ion-footer>
-    <ion-button fill="clear" expand="full" (click)="selectImage()">
-      <ion-icon slot="start" name="camera"></ion-icon>
-      Add Image
-    </ion-button>
+  <ion-button fill="clear" expand="full" (click)="selectImage()">
+    <ion-icon slot="start" name="camera"></ion-icon>
+    Add Image
+  </ion-button>
 </ion-footer>
