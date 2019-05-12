@@ -1,24 +1,29 @@
-import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
+import { Component, OnInit} from '@angular/core';
 import { ProposalService } from '../services/proposal.service';
 import { Proposal, PositionType, ProposalMapper } from '../core/models/proposal';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { NativeGeocoder,NativeGeocoderOptions, NativeGeocoderResult } from '@ionic-native/native-geocoder/ngx';
-import { IonItemSliding, ModalController } from '@ionic/angular';
+import {  ModalController, LoadingController, PopoverController, ToastController } from '@ionic/angular';
 import { CreateProposalComponent } from '../create-proposal/create-proposal.component';
 import { OverlayEventDetail } from '@ionic/core';
+import { ProposalThreeDotsPopoverComponent } from '../proposal-three-dots-popover/proposal-three-dots-popover.component';
+import { Place } from '../autocomplete-input/autocomplete-input.component';
+import { withCommaOrEmpty, joinWithCommaOrEmpty } from '../core/utils/utils';
 
 @Component({
   selector: 'app-proposals',
   templateUrl: './proposals.component.html',
   styleUrls: ['./proposals.component.scss'],
 })
-export class ProposalsComponent {
+export class ProposalsComponent implements OnInit {
+
+  lastSelectedZone : Place
   proposals: Proposal[]
-   
   geoLatitude: number;
   geoLongitude: number;
   geoAccuracy:number;
   geoAddress: string;
+  useMyPosition = true
   maxDistance = 5000
   watchLocationUpdates:any; 
   loading:any;
@@ -30,30 +35,26 @@ export class ProposalsComponent {
     maxResults: 5
   };
   constructor(
-    private ngZone: NgZone,
     private modalController: ModalController,
     private proposalService: ProposalService,
     private geolocation: Geolocation,
+    public popoverController: PopoverController,
+    private toastCtrl: ToastController,
+    private loadingCtrl : LoadingController,
     private nativeGeocoder: NativeGeocoder
-  ) {
-  }
+  ) {}
  
+  ngOnInit(){ this.getGeolocation() }
   
     //Get current coordinates of device
-    getGeolocation(){
+    async getGeolocation(){
+   
       this.geolocation.getCurrentPosition().then((resp) => {
         this.geoLatitude = resp.coords.latitude;
         this.geoLongitude = resp.coords.longitude; 
-        this.geoAccuracy = resp.coords.accuracy; 
-        this.proposalService.getProposals({
-          type: PositionType.POINT,
-          coordinates : [this.geoLongitude, this.geoLatitude]
-        }, this.maxDistance).subscribe(data=>{
-          this.proposals = ProposalMapper.fromJsonArray(data)
-        })
-        // this.getGeoencoder(this.geoLatitude,this.geoLongitude);
+        this.geoAccuracy = resp.coords.accuracy;
+        this.getGeoencoder(this.geoLatitude,this.geoLongitude);
        }).catch((error) => {
-         alert('Error getting location'+ JSON.stringify(error));
        });
     }
   
@@ -61,13 +62,28 @@ export class ProposalsComponent {
     getGeoencoder(latitude,longitude){
       this.nativeGeocoder.reverseGeocode(latitude, longitude, this.geoencoderOptions)
       .then((result: NativeGeocoderResult[]) => {
-        this.geoAddress = this.generateAddress(result[0]);
+        this.geoAddress = joinWithCommaOrEmpty(result[0].thoroughfare, result[0].locality , result[0].subLocality , result[0].administrativeArea , result[0].countryName );
+        alert(this.geoAddress)
       })
       .catch((error: any) => {
-        alert('Error getting location'+ JSON.stringify(error));
+        console.log(error)
       });
     }
-  
+    onUseMyPositionStatusChanged(){
+      this.geoLatitude = null
+      this.geoLongitude = null
+      if(this.useMyPosition){ this.getGeolocation() }
+      else if ( this.lastSelectedZone ){
+          this.geoLatitude = Number.parseFloat(this.lastSelectedZone.y)
+          this.geoLongitude = Number.parseFloat(this.lastSelectedZone.x) 
+        }  
+      
+    }
+    onZoneSelected(zone: Place){
+      this.lastSelectedZone = zone;
+      this.geoLatitude = Number.parseFloat(zone.y)
+      this.geoLongitude = Number.parseFloat(zone.x)
+    }
     //Return Comma saperated address
     generateAddress(addressObj){
         let obj = [];
@@ -82,7 +98,30 @@ export class ProposalsComponent {
         }
       return address.slice(0, -2);
     }
-  
+    async findProposals(){
+      if( !this.geoLatitude || ! this.geoLongitude )
+      {
+        let toast = await this.toastCtrl.create({
+          message: 'you should choose where, or accept getting location!',
+          duration: 2000
+        })
+        return toast.present()
+      }
+      let loader = await this.load()
+      loader.present()
+      this.proposalService.getProposals({
+        type: PositionType.POINT,
+        coordinates : [this.geoLongitude, this.geoLatitude]
+      }, this.maxDistance).subscribe(response=>{
+        loader.dismiss()
+        if(response['status_code'] == 200){
+          this.proposals = ProposalMapper.fromJsonArray(response['data'])
+        }
+        else{
+          console.log('3rror')
+        }
+      })
+    }
   
     //Start location update watch
     watchLocation(){
@@ -105,18 +144,50 @@ export class ProposalsComponent {
       const modal: HTMLIonModalElement =
          await this.modalController.create({
             component: CreateProposalComponent,
-            componentProps: {
-               aParameter: true,
-               otherParameter: new Date()
-            }
+            // componentProps: {
+            //    aParameter: true,
+            //    otherParameter: new Date()
+            // }
       });
        
       modal.onDidDismiss().then((proposal: OverlayEventDetail<Proposal>) => {
-         if (proposal.data !== null) {
+         if (proposal.data != null) {
            console.log('The result:', proposal.data.id);
          }
       });
       
       await modal.present();
   }
+  onRangeChanged(){
+    this.getGeolocation()
+  }
+
+  load() {
+    return this.loadingCtrl.create({
+      spinner: null,
+      message: 'Please wait...',
+      translucent: true,
+      cssClass: 'custom-class custom-loading'
+    });
+  }
+
+  async presentPopover(ev: any, proposal: Proposal) {
+    const popover = await this.popoverController.create({
+      component: ProposalThreeDotsPopoverComponent,
+      event: ev,
+      translucent: true,
+      componentProps:{
+        userId : proposal.createdBy
+      }
+    });
+    popover.onDidDismiss().then((hasDoneSomethingOverlay:OverlayEventDetail)=>{
+      if(hasDoneSomethingOverlay.data){
+        this.getGeolocation()
+      }
+    })
+    return await popover.present();
+  }
+  
+
+
 }

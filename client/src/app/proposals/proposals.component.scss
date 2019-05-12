@@ -11,11 +11,35 @@
 ion-card{
     outline: none;
 }
+.proposal-title{
+    font-size: 21px;
+}
 app-user-avatar{
     width: 50px;
     height: 50px;
     float: left;
 }
 .userInfo{
-    margin-left: 65px;
+    margin-left: 80px;
+    margin-right: 51px;
 }
+.user-profile-icon{
+    height: 50px;
+    width: 50px;
+    border: 2px solid;
+    // padding: 7px;
+}
+.event-description{
+    margin-top:30px;
+}
+.dots{
+    float: right;
+    position: absolute;
+    right: 0;
+    top: 0;
+    margin: 15px;
+}
+// .dots:after {
+//     content: '\2807';
+//     font-size: 32px;
+// }

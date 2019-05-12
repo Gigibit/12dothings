@@ -9,6 +9,7 @@ import { ProposalService } from '../services/proposal.service';
 import { ProposalRequestsComponent } from '../proposal-requests/proposal-requests.component';
 import { OverlayEventDetail } from '@ionic/core';
 import { RequestState } from '../core/models/request';
+import { ImageModalComponent } from '../image-modal/image-modal.component';
 
 const COLUMN_COUNT = 4
 
@@ -56,7 +57,7 @@ export class ProfilePage implements OnInit {
               this.images[this.images.length - 1].push(img);
             }
           });
-          if(this.images[this.images.length -1].length%COLUMN_COUNT !== 0){
+          if(this.images[this.images.length -1] && this.images[this.images.length -1].length%COLUMN_COUNT !== 0){
             for(var i = 0; i < this.images[this.images.length -1].length%COLUMN_COUNT; i++ )
             this.images[this.images.length - 1].push('');
           }
@@ -128,6 +129,16 @@ export class ProfilePage implements OnInit {
    
   }
 
+  openPreview(img) {
+    this.modalController.create({
+      component: ImageModalComponent,
+      componentProps: {
+        img: img
+      }
+    }).then(modal => {
+      modal.present();
+    });
+  }
 
 
 

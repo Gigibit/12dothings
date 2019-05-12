@@ -8,6 +8,8 @@ export interface User{
     profileImg: string
     description?: string
     imgs? : string[]
+    props? : string[]
+    iLike?:  boolean
 
 }
 
@@ -20,7 +22,9 @@ export class UserMapper{
             id: data['id'],
             profileImg: data['profile_img'],
             description: data['description'],
+            iLike: data['has_propsed'],
             imgs: data['imgs'],
+            props: data['props'],
             email: data['email']
         } : null
     }

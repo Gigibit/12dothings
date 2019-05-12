@@ -1,14 +1,14 @@
-<ion-content padding *ngIf="proposal">
-  <ion-item>
+<ion-header>
+  <ion-toolbar>
     <ion-button (click)="location.back()">
         <ion-icon name="ios-arrow-back"></ion-icon>
     </ion-button>
-    <ion-title>
-      <ion-label>
-        {{proposal.title}}
-      </ion-label>
-    </ion-title>
-  </ion-item>
+    <ion-title>{{proposal?.title}}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content *ngIf="proposal">
+
   <ion-label>{{proposal.description}}</ion-label>
   <div *ngIf="participants && participants.length > 0">
     <h3>partecipants</h3>
@@ -24,5 +24,6 @@
         <ion-button *ngSwitchCase="'NOT_REQUESTED'" (click)="join()" fill="clear" expand="full"  >ask for join!</ion-button>
         <ion-button *ngSwitchCase="'PENDING'" [disabled]="true" fill="clear" expand="full"  >request pending, stay tuned!</ion-button>    
         <ion-button *ngSwitchCase="'DENIED'" [disabled]="true" fill="clear" expand="full"  >request pending, stay tuned!</ion-button>    
+        <ion-button *ngSwitchCase="'APPROVED'" [disabled]="true" fill="clear" expand="full"  >request approved!</ion-button>    
       </div>
   </ion-footer>

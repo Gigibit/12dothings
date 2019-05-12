@@ -3,7 +3,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Place } from '../autocomplete-input/autocomplete-input.component';
 import { ProposalService } from '../services/proposal.service';
 import { PositionType } from '../core/models/proposal';
-import { ModalController } from '@ionic/angular';
+import { ModalController, LoadingController } from '@ionic/angular';
 
 
 @Component({
@@ -23,7 +23,9 @@ import { ModalController } from '@ionic/angular';
         <ion-label>Name</ion-label>
         <ion-input type="text" formControlName="title"></ion-input>
       </ion-item>
+      City
       <app-autocomplete-input ngDefaultControl formControlName="city"   [placeholder]="'City'"(onSearchResult)="onCitySelected($event)" ></app-autocomplete-input>
+      District
       <app-autocomplete-input ngDefaultControl formControlName="district"  [placeholder]="'District'" (onSearchResult)="onZoneSelected($event)" [region]="selectedCity" ></app-autocomplete-input>
       <ion-item>
         <ion-label>Description</ion-label>
@@ -32,13 +34,13 @@ import { ModalController } from '@ionic/angular';
 
     </form>
     <ion-item>
-      <ion-label>Accept all request</ion-label>
+      <ion-label>Accept all requests</ion-label>
       <ion-checkbox slot="end" [(ngModel)]="requestsAutoaccept"></ion-checkbox>
     </ion-item>
-    <ion-item>
+    <!-- ion-item>
       <ion-label>Use your own photo!</ion-label>
       <ion-checkbox slot="end" [(ngModel)]="useOwnerPhoto"></ion-checkbox>
-    </ion-item>
+    </ion-item -->
     </ion-content>
     <ion-footer>
       <ion-button [disabled]="proposalForm.invalid" (click)="create()" size="large"  expand="block">create</ion-button>
@@ -52,10 +54,11 @@ export class CreateProposalComponent implements OnInit {
   district: Place
   city: string
   requestsAutoaccept = true
-  useOwnerPhoto = true
+  useOwnerPhoto = false
 
   constructor( 
     private modalCtrl: ModalController,
+    private loadingCtrl: LoadingController,
     private proposalsService: ProposalService,
     private formBuilder: FormBuilder ) {
     this.proposalForm = this.formBuilder.group({
@@ -79,21 +82,31 @@ export class CreateProposalComponent implements OnInit {
   }
   ngOnInit() {}
 
-  create(){
-    alert('creating...')
+  async create(){
+    let loader = await this.load()
+    loader.present()
     this.proposalsService.createProposal({
       title: this.proposalForm.controls['title'].value,
       description : this.proposalForm.controls['description'].value,
-      useOwnerPhoto: this.useOwnerPhoto,
+      // useOwnerPhoto: this.useOwnerPhoto,
       autoAcceptRequest : this.requestsAutoaccept,
       position: {
         type : PositionType.POINT,
         coordinates : [Number.parseFloat(this.district.x), Number.parseFloat(this.district.y)]
       }
     }).subscribe(data=>{
+      loader.dismiss()
       if(data['status'] == 'OK'){
         this.modalCtrl.dismiss(true);
       }
     })
+  }
+  load() {
+    return this.loadingCtrl.create({
+      spinner: null,
+      message: 'Please wait...',
+      translucent: true,
+      cssClass: 'custom-class custom-loading'
+    });
   }
 }

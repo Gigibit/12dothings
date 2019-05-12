@@ -33,9 +33,9 @@ import { WebView } from '@ionic-native/ionic-webview/ngx';
 import { FilePath } from '@ionic-native/file-path/ngx';
  
 import { FileTransfer } from '@ionic-native/file-transfer/ngx';
-import { UserAvatarComponent } from './user-avatar/user-avatar.component';
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/compiler/src/core';
 import { ProfilePageModule } from './profile/profile.module';
+import { ImageModalComponent } from './image-modal/image-modal.component';
+import { ProposalThreeDotsPopoverComponent } from './proposal-three-dots-popover/proposal-three-dots-popover.component';
 
 
 
@@ -47,10 +47,12 @@ const config: SocketIoConfig = { url: 'http://localhost:3001/messages', options:
     ProposalsComponent,
     CreateProposalComponent,
     ChatRoomPage,
+    ImageModalComponent,
     ProposalDetailComponent,
-    AutocompleteInputComponent
+    AutocompleteInputComponent,
+    ProposalThreeDotsPopoverComponent
   ],
-  entryComponents: [],
+  entryComponents: [ImageModalComponent, ProposalThreeDotsPopoverComponent],
   imports: [
     BrowserModule, 
     IonicModule.forRoot(), 

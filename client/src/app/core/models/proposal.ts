@@ -1,5 +1,6 @@
 import { User, UserMapper } from './user';
 import { Request, RequestMapper } from './request';
+import { titleCaseWord, timeSince } from '../utils/utils';
 
 export interface Proposal{
     id?: number
@@ -9,6 +10,7 @@ export interface Proposal{
     img? : string
     users? : User[]
     createdBy?: string
+    createdAt?: string
     joinRequests? : Request[]
     ownerInfo?: User
     autoAcceptRequest?:Boolean
@@ -27,16 +29,18 @@ export interface Position{
 
 export class ProposalMapper{
     static fromJson(data: any){
+        console.log(data)
         return data ?  {
             id : data['id'],
-            title: data['title'],
+            title: titleCaseWord(data['title']),
             createdBy : data['created_by'],
             ownerInfo : UserMapper.fromJson(data['owner_info']),
-            description: data['description'],
+            description: titleCaseWord(data['description']),
             joinRequests : RequestMapper.fromJsonArray(data['join_requests']),
             users : UserMapper.fromJsonArray(data['users']),
             position: data['position'],
-            img: data['img'] 
+            img: data['img'],
+            createdAt : timeSince(data['created_at'])
     
         } : null
     }

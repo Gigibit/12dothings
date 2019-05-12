@@ -51,6 +51,7 @@
     "cordova-sqlite-storage": "^3.2.0",
     "core-js": "^2.5.4",
     "leaflet-geosearch": "^2.7.0",
+    "moment": "^2.24.0",
     "ng-socket-io": "^0.2.4",
     "rxjs": "~6.4.0",
     "rxjs-compat": "^6.4.0",
@@ -84,7 +85,7 @@
     "tslint": "~5.16.0",
     "typescript": "~3.1.6"
   },
-  "description": "An Ionic project",
+  "description": "wanado",
   "cordova": {
     "plugins": {
       "cordova-sqlite-storage": {},

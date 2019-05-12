@@ -48,13 +48,13 @@
     </div>
     
     
-    <h3 *ngIf="images?.length == 0" text-center>please select image to convince others to participate and get involved!</h3>
     <div *ngSwitchCase="'gallery'" class="gallery">
+      <h3 *ngIf="images?.length == 0" text-center>please select image to convince others to participate and get involved!</h3>
       <ion-grid>
         <ion-row *ngFor="let rowData of images; index as pos">
           <ion-col col-6 col-md-4 col-xl-3 *ngFor="let img of rowData; index as pos">
             <div class="image-container">
-              <ion-img *ngIf="img" [src]="img"></ion-img>
+              <ion-img *ngIf="img" [src]="img" (click)="openPreview(img)"></ion-img>
             </div>
           </ion-col>
         </ion-row>

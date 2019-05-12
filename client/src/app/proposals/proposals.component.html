@@ -1,20 +1,25 @@
 <ion-header>
   <ion-toolbar>
     <ion-title float="left">
-      oo12do
+      wanado
     </ion-title>
     <ion-label float="right" routerLink="/profile"  routerDirection="forward">
-      <ion-icon name="body"></ion-icon> Me
+      <ion-icon class="user-profile-icon" name="person"></ion-icon>
     </ion-label>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <ion-range  class="col-md-12" pin="true" [(ngModel)]="maxDistance"  min="50" max="100000" step="2">
+  <ion-item>
+    <ion-label>use your location</ion-label>
+    <ion-checkbox (ionChange)="onUseMyPositionStatusChanged()" [(ngModel)]="useMyPosition" value="true"></ion-checkbox>
+  </ion-item>
+  <app-autocomplete-input [static]="true" *ngIf="!useMyPosition" ngDefaultControl  [placeholder]="'district'" (onSearchResult)="onZoneSelected($event)" [region]="selectedCity" ></app-autocomplete-input>
+  <ion-range (mouseup)="onRangeChanged()" (touchend)="onRangeChanged()" class="col-md-12" pin="true" [(ngModel)]="maxDistance"  min="50" max="50000" step="2">
     <ion-icon size="small" slot="start" name="walk"></ion-icon>
     <ion-icon slot="end" name="walk"></ion-icon>
   </ion-range>
-  <ion-button id="get-proposal-button" (click)="getGeolocation()">
+  <ion-button id="get-proposal-button" (click)="findProposals()">
     get all
   </ion-button> 
   <ion-list>
@@ -23,11 +28,15 @@
         <app-user-avatar [userInfo]="proposal.ownerInfo"></app-user-avatar>
         <div class="userInfo" >
           <ion-card-subtitle [routerLink]="['/proposal-detail/', proposal.id]">{{proposal.ownerInfo?.name}} {{proposal.ownerInfo?.surname}}</ion-card-subtitle>
-          <ion-card-title  [routerLink]="['/proposal-detail/', proposal.id]">{{proposal.title}}</ion-card-title>
+          <ion-card-title class="proposal-title"  [routerLink]="['/proposal-detail/', proposal.id]">{{proposal.title}}</ion-card-title>
+          <ion-label class="timestamp" position="stacked">{{proposal.createdAt}}</ion-label>
+        </div>
+        <div class="dots" (click)="presentPopover($event, proposal)">
+          <ion-icon name="more"></ion-icon>
         </div>
       </ion-card-header>
-      <ion-card-content [routerLink]="['/proposal-detail/', proposal.id]" >
-        <ion-img class="proposalImg" [src]="proposal.img"></ion-img>
+      <ion-card-content class="event-description" [routerLink]="['/proposal-detail/', proposal.id]" >
+        <!-- <ion-img *ngIf="proposal.img" class="proposalImg" [src]="proposal.img"></ion-img> -->
         {{proposal.description}}
       </ion-card-content>
     </ion-card>

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ProposalService } from '../services/proposal.service';
 import { Request, RequestState } from '../core/models/request';
 import { NavParams, ModalController, ActionSheetController, LoadingController } from '@ionic/angular';
+import { removeObjectFromArray } from '../core/utils/utils';
 
 @Component({
   selector: 'app-proposal-requests',
@@ -31,7 +32,7 @@ export class ProposalRequestsComponent implements OnInit {
     this.proposalService.approveRequest(request.proposalId, request.user.id)
     .subscribe(data=> {
       loading.dismiss()
-      this.removeRequest(request)
+      this.requests = removeObjectFromArray(this.requests,request)
       if(this.requests.length == 0) this.modalCtrl.dismiss(true)    
       this.somethingChanged = data['status'] == 'OK'
     })
@@ -45,18 +46,13 @@ export class ProposalRequestsComponent implements OnInit {
     .subscribe(data=> {
       console.log(data)
       loading.dismiss()
-      this.removeRequest(request)
+      this.requests = removeObjectFromArray(this.requests, request)
       if(this.requests.length == 0) this.modalCtrl.dismiss(true)
       this.somethingChanged = data['status'] == 'OK'
     
     })
   }
-  removeRequest(request:Request){
-    const index = this.requests.indexOf(request, 0);
-    if (index > -1) {
-      this.requests.splice(index, 1);
-    }
-  }
+ 
   notApprovedRequests(){
     return this.requests ? this.requests.filter(value => value.state != RequestState.APPROVED && value.state != RequestState.DENIED) : []
   }

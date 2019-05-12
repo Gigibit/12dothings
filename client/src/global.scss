@@ -14,7 +14,11 @@ ion-button, ion-toolbar, ion-searchbar {
     --ion-color-base: transparent !important;
     --background: transparent;
     --color: #777;
-    --background-activated: #2d32aa ;
+    --background-activated: #f5f6f9;
+    --color-activated: #472daa;
+}
+ion-button{
+    --box-shadow: none;
 }
 
 ion-title{

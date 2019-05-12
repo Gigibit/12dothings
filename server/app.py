@@ -51,6 +51,9 @@ USER_FOR_OTHER      = {'password': 0, 'token':0, 'verified' : 0 }
 USER_FOR_HIM        = {'password': 0, 'token':0,  'verified' : 0 }
 USER_FOR_SYNTHESIS  = {'password': 0, 'token':0, 'email':0, 'imgs':0, 'verified': 0 }
 
+ADD    = 0
+REMOVE = 1
+
 
 #project_dir = os.path.dirname(os.path.abspath(__file__))
 #database_file = "sqlite:///{}".format(os.path.join(project_dir, "whowant.sqlite3"))
@@ -115,31 +118,40 @@ def get_proposal_by_user(id):
 
 @app.route('/api/proposals', methods=['GET', 'POST'])
 def proposals():
-    if request.method == 'GET':
-        if  request.args.get('longitude', None) and request.args.get('latitude', None):
-            longitude = float(request.args['longitude'])
-            latitude  = float(request.args['latitude']) 
-            max_distance = request.args.get('md', 13321)
-            query = {'position': 
-                        {'$near': SON([(
-                            '$geometry', SON([
-                                    ('type', 'Point'), 
-                                     ('coordinates', [longitude, latitude])
-                                    ])
-                                ), 
-                            ('$maxDistance', int(max_distance))
-                            ])
+    access_token = request.headers.get('auth-token', None)
+    if access_token:
+        user, user_id, email = get_user(access_token)
+        if request.method == 'GET':
+            if  request.args.get('longitude', None) and request.args.get('latitude', None):
+                current_user = db.users.find_one({'_id' : ObjectId(user_id)})
+                longitude = float(request.args['longitude'])
+                latitude  = float(request.args['latitude']) 
+                max_distance = request.args.get('md', 13321)
+                print('----- blocked users ----')
+                print(current_user.get('blocked_users', []))
+                print('------------------------')
+                query = {'position': 
+                            {'$near': SON([(
+                                '$geometry', SON([
+                                        ('type', 'Point'), 
+                                        ('coordinates', [longitude, latitude])
+                                        ])
+                                    ), 
+                                ('$maxDistance', int(max_distance))
+                                ])
+                            },
+                         'created_by': {
+                             '$nin' : current_user.get('blocked_users', [])
+                         }
                         }
-                    }
-            proposals = db.proposals.find(query)
+                proposals = db.proposals.find(query)
 
-            return dumps([slice_id(x) for x in proposals ])
-        else:    
-            return dumps([slice_id(x) for x in db.proposals.find({})])
+                return Responses.success( { 'data' : [slice_id(x) for x in proposals ] } )
+            else:    
+                return Responses.success( { 'data' : [slice_id(x) for x in db.proposals.find({})] })
 
-    elif request.method == 'POST':
-        access_token = request.headers.get('auth-token', None)
-        if access_token:
+        elif request.method == 'POST':
+        
             proposal_request = request.get_json()
             user, owner_id, email             = get_user(access_token)        
             #TODO: map all the fields needed
@@ -166,7 +178,12 @@ def proposals():
                     'id' : str(result.inserted_id)
                 })
         else:
-            return jsonify({ 'status' : 'ERROR' ,'code' : 'user_not_verified', 'status_code' : 401 })
+            return Responses.bad_request()
+    else:
+        return Responses.unauthorized()
+
+
+
 
 
 @app.route('/api/join-proposal/<id>', methods=["POST"])
@@ -187,11 +204,21 @@ def join(id):
                     }
                 }
             })
-            return jsonify({ 'status' : 'OK', 'status_code' : 200 })
+            return Responses.success()
         else:
             return Responses.unauthorized()
     else:
         return jsonify({ 'status' : 'ERROR' ,'code' : 'unauthorized', 'status_code' : 401 })
+
+
+@app.route('/api/props/<id>', methods=['POST', 'GET'])
+def props(id):
+    return edit_props(id, action = ADD)  
+
+@app.route('/api/unprops/<id>', methods=['POST', 'GET'])
+def unprops(id):
+    return edit_props(id, action = REMOVE)
+
 
 @app.route('/api/proposal/<id>', methods=['GET', 'PUT', 'DELETE'])
 def proposal(id):
@@ -205,10 +232,10 @@ def proposal(id):
             if requested_proposal:
                 pprint(requested_proposal)
                 try:
+                    print(user_id)
                     join_request = next(filter(lambda x: x['user']['id'] == user_id,  requested_proposal['join_requests']))
                 except :
                     join_request = None
-                pprint(join_request)
                 return jsonify({
                         'users': slice_ids(users),
                         'detail': slice_id(requested_proposal),
@@ -221,11 +248,35 @@ def proposal(id):
     elif request.method == 'DELETE':
         return dumps(db.proposals.delete_many({'_id' : ObjectId(id) }))
 
-
-
 def login_user(check_user):
     pass
 
+@app.route('/api/block-user-proposal/<id>', methods=['POST'])
+def block_user_proposal(id):
+    access_token = request.headers.get('auth-token', None)
+    if access_token :
+        user, user_id, email = get_user(access_token)
+        db.users.update_one({'_id': ObjectId(user_id)},
+            { '$addToSet':
+                {  'blocked_users' : id }
+            }
+        )
+        return Responses.success()
+    else:
+        return Responses.unauthorized()
+@app.route('/api/unblock-user-proposal/<id>', methods=['POST'])
+def unblock_user_proposal(id):
+    access_token = request.headers.get('auth-token', None)
+    if access_token :
+        user, user_id, email = get_user(access_token)
+        db.users.update_one({'_id': ObjectId(user_id)},
+            { '$pull':
+                {  'blocked_users' : id }
+            }
+        )
+        return Responses.success()
+    else:
+        return Responses.unauthorized()
 
 @app.route('/api/deny-request', methods=['POST'])
 def deny_request():
@@ -240,8 +291,10 @@ def approve_request():
 def get_user_info(id):
     access_token = request.headers.get('auth-token', None)
     if access_token :
-        user, id, email = get_user(access_token)
-        return dumps(db.users.find_one({'_id' : ObjectId(id)}, USER_FOR_OTHER))
+        user, user_id, email = get_user(access_token)
+        founded = slice_id(db.users.find_one({'_id' : ObjectId(id)}, USER_FOR_OTHER))
+        founded['has_propsed'] = user_id in founded['props'] if founded['props'] else False
+        return dumps(founded)
     else:
         return Responses.unauthorized()
 
@@ -257,8 +310,10 @@ def register():
                 'name' : user['name'],
                 'surname' : user['surname'],
                 'email': user['email'],
+                'blocked_users' : [],
                 'password': generate_password_hash(user['password']),
                 'profile_img'  : user.get('img', DEFAULT_USER_IMG),
+                'props': [],
                 #TODO use ffmpeg to reduce size
                 'thumbnail'    : user.get('img',DEFAULT_USER_IMG),
                 'imgs' : [],
@@ -266,11 +321,11 @@ def register():
                 'logged': False,
                 'token': send_email_confirmation(user['email'])
             })
-            return jsonify({ 'status' : 'OK', 'status_code' : 200 })
+            return Responses.success()
         else:
             return jsonify({'status' : 'ERROR', 'code': 'user_already_registered', 'status_code' : 409})
 
-    return jsonify({ 'status' : 'ERROR', 'status_code' : 400 })
+    return Responses.bad_request()
 
 
 
@@ -325,7 +380,7 @@ def login():
         else:
             return jsonify({ 'status' : 'ERROR', 'code' : 'wrong_credentials', 'status_code' : 403 })
 
-    return jsonify({ 'status' : 'ERROR', 'status_code' : 400 })
+    return Responses.bad_request()
 
 
 @app.route('/api/upload-image', methods=['POST'])
@@ -335,13 +390,16 @@ def upload_image():
         user, id, email = get_user(access_token)
         print('taken user')
         img = upload_file(id)
+        print('out of if')
         if img:
+            print(img)
             #TODO: check size of user's imgs
-            db.users.update_one({'_id':ObjectId(id)}, {
+            result = db.users.update_one({'_id':ObjectId(id)}, {
                 "$push":{
                     "imgs" : img
                 }
             })
+            print(id)
             return jsonify({ 'status' : 'OK', 'status_code': 200 })
         else:
             print('no img no party')
@@ -375,6 +433,30 @@ def add_message(json, methods=['GET', 'POST']):
     print('received message for: ' + json['proposal'])
     emit('message', json, broadcast=True, room=json['proposal'])
 
+
+def edit_props(id, action = ADD):
+    access_token    = request.headers.get('auth-token', None)
+    if access_token:
+        if request.method == 'POST':
+            user, user_id, email             = get_user(access_token)
+            if action == ADD:
+                props_query = {'$addToSet':{
+                    'props': user_id
+                   }
+                }
+            elif action == REMOVE:
+                props_query =  {'$pull':{
+                    'props': user_id
+                   }
+                }
+            if props_query:
+                result = db.users.update_one({ '_id': ObjectId(id) }, props_query)
+            return Responses.success()
+        else:
+            return Responses.bad_request()
+
+    else:
+        return Responses.unauthorized()    
     
 def edit_request_state(state):
     access_token = request.headers.get('auth-token', None)
@@ -414,6 +496,7 @@ UTILS
 '''
 def slice_id(p): 
     p['id'] = str(p['_id'])
+    p['created_at'] = str(p['_id'].generation_time)
     del p['_id']
     return p
 
@@ -491,7 +574,18 @@ class Responses:
     def unauthorized():
         return jsonify({ 'status' : 'ERROR' ,'code' : 'unauthorized', 'status_code' : 401 })
  
+    @staticmethod
+    def success(additional_data = None):
+        response = { 'status' : 'OK', 'status_code' : 200 }
+        if additional_data:
+            response = dict(response)  # or orig.copy()
+            response.update(additional_data)
+        return jsonify(response)
 
+
+    @staticmethod
+    def bad_request():
+        return jsonify({ 'status' : 'ERROR', 'status_code' : 400 })
 
 
 if __name__ == '__main__':

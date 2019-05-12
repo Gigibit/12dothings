@@ -1,7 +1,7 @@
 <ion-header>
   <ion-toolbar>
     <div class="output-result" >{{output}}</div>
-    <div [className]="isSearchboxOpened ? 'searchbar-wrapper opened' : 'searchbar-wrapper closed'">
+    <div [className]="isSearchboxOpened || static ? 'searchbar-wrapper opened' : 'searchbar-wrapper closed'">
     <ion-searchbar #searchBox 
                   [(ngModel)]="input" 
                   (ionInput)="updateSearchResults()" 

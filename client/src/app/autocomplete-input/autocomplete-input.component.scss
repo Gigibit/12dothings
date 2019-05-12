@@ -19,6 +19,9 @@
         z-index: 9999999;
         width: 100%;
     }
+    ion-searchbar{
+        font-size: 14px;
+    }
 
     .output-result{
         position: absolute;
@@ -27,6 +30,6 @@
         background: white;
         text-align: center;
         padding-top: 14px;
-        font-size: 20px;
+        font-size: 14px;
         color: #222;
     }

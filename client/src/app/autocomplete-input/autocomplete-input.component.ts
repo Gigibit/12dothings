@@ -34,7 +34,7 @@ export enum AutocompleteType{
 })
 export class AutocompleteInputComponent {
   @Input() public placeholder = "Search for a place..."
-
+  @Input() public static = false
 
 
   _type: string
@@ -50,7 +50,6 @@ export class AutocompleteInputComponent {
   public get region(){ return this._region; }
   
   @Output() onSearchResult = new EventEmitter<Place>();
-
   places = []
   input = ''
   output: Place
@@ -62,6 +61,7 @@ export class AutocompleteInputComponent {
   clickout(event) { this.isSearchboxOpened = this.eRef.nativeElement.contains(event.target); }
 
   updateSearchResults(){
+    if(this.isSearchboxOpened)
     provider.search({ 
       query: this.input  + ' ' + ( this.region ? this.region.split(',')[0] : '' )  
     })
@@ -100,6 +100,7 @@ export class AutocompleteInputComponent {
     this.places=[]
     this.isSearchboxOpened = false
     this.onSearchResult.emit(item)
+    this.input = ""
   }
 
 }

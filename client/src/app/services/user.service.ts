@@ -11,6 +11,7 @@ const CONTEXT = AUTH_SERVER + '/api/get-context'
 const UPLOAD_URL = SERVICE_SERVER + "/api/upload-image"
 const USER_INFO = SERVICE_SERVER + "/api/get-user-info/"
 const PROPS_HIM = SERVICE_SERVER + "/api/props/"
+const UNPROPS_HIM = SERVICE_SERVER + "/api/unprops/"
 const STORAGE_KEY = 'experience_key_img';
 
 @Injectable({
@@ -62,9 +63,11 @@ export class UserService {
           this.uploadUri(imageData)
         }
         if(onUri){
-          onUri(imageData)
+          // onUri(imageData)
         }
-      }, onError || console.log );
+      }, err=>{
+        console.log(err)
+      });
     }
     uploadUri(uri, onSuccess: (data)=>void = data=>{ console.log(data) }){
       
@@ -79,6 +82,8 @@ export class UserService {
       }
       this.fileTransfer.upload(encodeURI(uri), UPLOAD_URL,options)
       .then(data=>{ 
+        console.log("yuppi")
+
         onSuccess(data)
         console.log("yuppi")
       })
@@ -87,7 +92,11 @@ export class UserService {
     uploadImageData(formData: FormData) {
       return this.http.post(UPLOAD_URL, formData,{
         headers: this.headers
-      }).subscribe(data=> console.log(data));
+      }).subscribe(data=> {
+        console.log(data)
+        console.log("yuppi")
+
+      });
     }
     
     dataURItoBlob(dataURI) {
@@ -121,7 +130,14 @@ export class UserService {
       })
     }
     propsHim(userInfo: User){
+      console.log(userInfo)
       return this.http.post(PROPS_HIM + userInfo.id, {},{
+        headers: this.headers 
+      })
+    }
+    unpropsHim(userInfo: User){
+      console.log(userInfo)
+      return this.http.post(UNPROPS_HIM + userInfo.id, {},{
         headers: this.headers 
       })
     }
