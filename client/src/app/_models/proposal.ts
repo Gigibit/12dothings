@@ -1,6 +1,6 @@
 import { User, UserMapper } from './user';
 import { Request, RequestMapper } from './request';
-import { titleCaseWord, timeSince } from '../utils/utils';
+import { titleCaseWord, timeSince } from '../_utils/utils';
 
 export interface Proposal{
     id?: number

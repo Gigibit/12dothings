@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Place } from '../autocomplete-input/autocomplete-input.component';
-import { ProposalService } from '../services/proposal.service';
-import { PositionType } from '../core/models/proposal';
+import { ProposalService } from '../_services/proposal.service';
+import { PositionType } from '../_models/proposal';
 import { ModalController, LoadingController } from '@ionic/angular';
 
 

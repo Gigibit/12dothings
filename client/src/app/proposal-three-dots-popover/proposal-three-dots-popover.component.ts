@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { ProposalService } from '../services/proposal.service';
-import { Proposal } from '../core/models/proposal';
+import { ProposalService } from '../_services/proposal.service';
+import { Proposal } from '../_models/proposal';
 import { ActionSheetController, PopoverController, NavParams } from '@ionic/angular';
 
 @Component({

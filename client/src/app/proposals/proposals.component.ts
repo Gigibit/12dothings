@@ -9,6 +9,7 @@ import { OverlayEventDetail } from '@ionic/core';
 import { ProposalThreeDotsPopoverComponent } from '../proposal-three-dots-popover/proposal-three-dots-popover.component';
 import { Place } from '../autocomplete-input/autocomplete-input.component';
 import { withCommaOrEmpty, joinWithCommaOrEmpty } from '../core/utils/utils';
+import { UserService } from '../services/user.service';
 
 @Component({
   selector: 'app-proposals',
@@ -37,6 +38,7 @@ export class ProposalsComponent implements OnInit {
   constructor(
     private modalController: ModalController,
     private proposalService: ProposalService,
+    private userService: UserService,
     private geolocation: Geolocation,
     public popoverController: PopoverController,
     private toastCtrl: ToastController,
@@ -62,8 +64,8 @@ export class ProposalsComponent implements OnInit {
     getGeoencoder(latitude,longitude){
       this.nativeGeocoder.reverseGeocode(latitude, longitude, this.geoencoderOptions)
       .then((result: NativeGeocoderResult[]) => {
-        this.geoAddress = joinWithCommaOrEmpty(result[0].thoroughfare, result[0].locality , result[0].subLocality , result[0].administrativeArea , result[0].countryName );
-        alert(this.geoAddress)
+        this.geoAddress = joinWithCommaOrEmpty( /* result[0].thoroughfare,*/ result[0].locality , result[0].subLocality , result[0].administrativeArea , result[0].countryName );
+        this.userService.updateAddress(this.geoAddress)
       })
       .catch((error: any) => {
         console.log(error)

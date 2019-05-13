@@ -11,7 +11,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { ProposalsComponent } from './proposals/proposals.component';
 import { CreateProposalComponent } from './create-proposal/create-proposal.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import { IonicStorageModule } from '@ionic/storage';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -36,6 +36,8 @@ import { FileTransfer } from '@ionic-native/file-transfer/ngx';
 import { ProfilePageModule } from './profile/profile.module';
 import { ImageModalComponent } from './image-modal/image-modal.component';
 import { ProposalThreeDotsPopoverComponent } from './proposal-three-dots-popover/proposal-three-dots-popover.component';
+import { ErrorInterceptor } from './_helpers/error.interceptor';
+import { JwtInterceptor } from './_helpers/jwt.interceptor';
 
 
 
@@ -77,6 +79,8 @@ const config: SocketIoConfig = { url: 'http://localhost:3001/messages', options:
     WebView,
     FilePath,
     FileTransfer,
+    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent]

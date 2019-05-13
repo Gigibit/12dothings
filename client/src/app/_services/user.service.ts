@@ -5,13 +5,15 @@ import { Camera, CameraOptions, PictureSourceType } from '@ionic-native/Camera/n
 import { AUTH_SERVER, SERVICE_SERVER } from '../config';
 import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-native/file-transfer/ngx'
 import { Platform } from '@ionic/angular';
-import { User } from '../core/models/user';
+import { User } from '../_models/user';
+import { ThrowStmt } from '@angular/compiler';
 
 const CONTEXT = AUTH_SERVER + '/api/get-context'
 const UPLOAD_URL = SERVICE_SERVER + "/api/upload-image"
 const USER_INFO = SERVICE_SERVER + "/api/get-user-info/"
 const PROPS_HIM = SERVICE_SERVER + "/api/props/"
 const UNPROPS_HIM = SERVICE_SERVER + "/api/unprops/"
+const UPDATE_USER_ADDRESS = SERVICE_SERVER + "/api/update-address"
 const STORAGE_KEY = 'experience_key_img';
 
 @Injectable({
@@ -131,15 +133,21 @@ export class UserService {
     }
     propsHim(userInfo: User){
       console.log(userInfo)
-      return this.http.post(PROPS_HIM + userInfo.id, {},{
+      return this.http.post(PROPS_HIM + userInfo.id, {}, {
         headers: this.headers 
       })
     }
     unpropsHim(userInfo: User){
-      console.log(userInfo)
-      return this.http.post(UNPROPS_HIM + userInfo.id, {},{
+      return this.http.post(UNPROPS_HIM + userInfo.id, {}, {
         headers: this.headers 
       })
     }
+    
+    updateAddress(address : string){
+      return this.http.post(UPDATE_USER_ADDRESS, { address : address }, {
+        headers : this.headers
+      })
+    }
+
   }
   

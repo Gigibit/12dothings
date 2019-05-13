@@ -3,7 +3,7 @@ import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 import { ProposalsComponent } from './proposals/proposals.component';
 import { CreateProposalComponent } from './create-proposal/create-proposal.component';
 import { ProposalDetailComponent } from './proposal-detail/proposal-detail.component';
-import { AuthGuard } from './guards/auth.guard';
+import { AuthGuard } from './_guards/auth.guard';
 
 const routes: Routes = [
   { path: '', redirectTo: 'proposals', pathMatch: 'full' },

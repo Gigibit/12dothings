@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Socket } from 'ng-socket-io';
-import { Proposal } from '../core/models/proposal';
+import { Proposal } from '../_models/proposal';
 
 @Injectable({
   providedIn: 'root'

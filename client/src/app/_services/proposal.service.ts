@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Proposal } from '../core/models/proposal';
+import { Proposal } from '../_models/proposal';
 import { Observable, of } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Position } from '../core/models/proposal'
+import { Position } from '../_models/proposal'
 import { AuthService } from './auth.service';
 import { SERVICE_SERVER } from '../config';
 

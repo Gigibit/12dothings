@@ -10,6 +10,7 @@ export interface User{
     imgs? : string[]
     props? : string[]
     iLike?:  boolean
+    token? : string
 
 }
 
