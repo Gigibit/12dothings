@@ -52,7 +52,7 @@ export class AutocompleteInputComponent {
   @Output() onSearchResult = new EventEmitter<Place>();
   places = []
   input = ''
-  output: Place
+  output = ''
   isSearchboxOpened = false
 
   constructor(private zone: NgZone, private eRef: ElementRef) { }
@@ -96,11 +96,14 @@ export class AutocompleteInputComponent {
     return out;
   }
   onSerachResultTap(item){ 
-    this.output = item.label;
     this.places=[]
     this.isSearchboxOpened = false
     this.onSearchResult.emit(item)
-    this.input = ""
+
+    if(!this.static){
+      this.output = item.label
+    }
+    this.input = item.label
   }
 
 }

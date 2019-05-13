@@ -20,7 +20,6 @@ const STORAGE_KEY = 'experience_key_img';
   providedIn: 'root'
 })
 export class UserService {
-  headers = new HttpHeaders();
   contentType = 'image/png';
   fileTransfer: FileTransferObject = this.transfer.create();
   
@@ -31,13 +30,10 @@ export class UserService {
     private camera: Camera,
     private auth: AuthService
     ) {
-      this.headers = this.headers.set('auth-token', this.auth.token())
     }
     
     getContext(){
-      return this.http.get( CONTEXT, {
-        headers : this.headers
-      })
+      return this.http.get( CONTEXT )
     }
     
     takePicture(sourceType: PictureSourceType, onUri: (string)=>void = null, onError: (error)=>void = null) {
@@ -92,9 +88,7 @@ export class UserService {
       .catch( (err) => console.log(err));
     }
     uploadImageData(formData: FormData) {
-      return this.http.post(UPLOAD_URL, formData,{
-        headers: this.headers
-      }).subscribe(data=> {
+      return this.http.post(UPLOAD_URL, formData ).subscribe(data=> {
         console.log(data)
         console.log("yuppi")
 
@@ -127,26 +121,18 @@ export class UserService {
       return newFileName;
     }
     getUserInfo(userId: string){
-      return this.http.get(USER_INFO + userId,{
-        headers : this.headers
-      })
+      return this.http.get(USER_INFO + userId)
     }
     propsHim(userInfo: User){
       console.log(userInfo)
-      return this.http.post(PROPS_HIM + userInfo.id, {}, {
-        headers: this.headers 
-      })
+      return this.http.post(PROPS_HIM + userInfo.id, {})
     }
     unpropsHim(userInfo: User){
-      return this.http.post(UNPROPS_HIM + userInfo.id, {}, {
-        headers: this.headers 
-      })
+      return this.http.post(UNPROPS_HIM + userInfo.id, {})
     }
     
     updateAddress(address : string){
-      return this.http.post(UPDATE_USER_ADDRESS, { address : address }, {
-        headers : this.headers
-      })
+      return this.http.post(UPDATE_USER_ADDRESS, { address : address })
     }
 
   }

@@ -369,10 +369,13 @@ def login():
             if check_user['verified']:
                 if check_password_hash(check_user['password'], user['password']):
                     result = db.users.update_one({'email': user['email']}, {'$set':{ 'logged': True }})
-                    user_was = db.users.find_one({'email': user['email']})
+                    user_was = db.users.find_one({'email': user['email']}, USER_FOR_HIM)
+                    user = user_was
                     user['id'] = encode(str(user_was['_id']))
-                    token = to_jwt(user)
-                    return jsonify({ 'status' : 'OK', 'access_token': token })
+                    del user['_id']
+                    user['token'] = to_jwt(user)
+                    
+                    return jsonify({ 'status' : 'OK', 'data': user })
                 else:
                     return jsonify({ 'status' : 'ERROR', 'code' : 'wrong_credentials', 'status_code' : 403 })
             else:

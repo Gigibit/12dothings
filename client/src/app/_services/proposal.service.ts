@@ -17,14 +17,11 @@ const BLOCK_USER_PROPOSAL_SERVICE   = SERVICE_SERVER + '/api/block-user-proposal
   providedIn: 'root'
 })
 export class ProposalService {
-  headers = new HttpHeaders();
 
   constructor(
     private http: HttpClient,
     auth: AuthService
-  ) { 
-    this.headers = this.headers.set('auth-token', auth.token());
-  }
+  ) {   }
 
            
   createProposal(proposal: Proposal): Observable<any>{
@@ -33,19 +30,13 @@ export class ProposalService {
     proposalMap['accept_all_request'] = proposal.useOwnerPhoto
     proposalMap['use_owner_photo'] = proposal.autoAcceptRequest
 
-    return this.http.post(PROPOSALS_CRUD_SERVICE, proposal,{
-      headers : this.headers
-    })
+    return this.http.post(PROPOSALS_CRUD_SERVICE, proposal)
   }
   getProposals(location: Position, maxDistance: number = null): Observable<any>{
     return this.http.get(PROPOSALS_CRUD_SERVICE +
                       '?longitude='+location.coordinates[0] +
                       '&latitude='+location.coordinates[1]  +
-                      ( maxDistance ? '&md=' + maxDistance : "" ),
-                      {
-                        headers : this.headers
-                      }
-                    )
+                      ( maxDistance ? '&md=' + maxDistance : "" ) )
   }
 
   getProposalDetail(id: string){
@@ -54,36 +45,26 @@ export class ProposalService {
     //   description: "oidnaoidncoianc",
     //   users: []
     // })
-    return this.http.get( SINGLE_PROPOSAL_SERVICE + '/' + id, {
-      headers : this.headers
-    })
+    return this.http.get( SINGLE_PROPOSAL_SERVICE + '/' + id)
   }
 
   join(id : string){
-    return this.http.post( JOIN_PROPOSAL_SERVICE + id , {}, {
-      headers : this.headers
-    })
+    return this.http.post( JOIN_PROPOSAL_SERVICE + id , {})
   }
 
   approveRequest(proposalId: string, userToApproveId: string){
     return this.http.post( APPROVE_REQUEST_SERVICE , {
       'user_to_approve' : userToApproveId,
       'proposal_id' : proposalId
-    }, {
-      headers : this.headers
     })
   }
   denyRequest(proposalId: string, userToApproveId: string){
     return this.http.post( DENY_REQUEST_SERVICE , {
       'user_to_approve' : userToApproveId,
       'proposal_id' : proposalId
-    }, {
-      headers : this.headers
     })
   }
   blockUser(userId: string ){
-    return this.http.post( BLOCK_USER_PROPOSAL_SERVICE + userId , { }, {
-      headers : this.headers
-    })
+    return this.http.post( BLOCK_USER_PROPOSAL_SERVICE + userId , { })
   }
 }

@@ -26,7 +26,8 @@ export class UserMapper{
             iLike: data['has_propsed'],
             imgs: data['imgs'],
             props: data['props'],
-            email: data['email']
+            email: data['email'],
+            token: data['token']
         } : null
     }
     static  fromJsonArray(data:any[]): User[]{

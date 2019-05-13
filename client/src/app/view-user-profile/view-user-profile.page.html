@@ -7,7 +7,7 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content *ngIf="userInfo">
     <div class="like-button-container">
         <ion-button class="star" clear block [class.unlike]="!userInfo.iLike" [class.like]="userInfo.iLike" (click)="userInfo.iLike ? unprops() : props()">
             <ion-icon name="star"></ion-icon>
@@ -16,7 +16,7 @@
           <span class="like-count" *ngIf="likeCount && likeCount > 0">{{ likeCount }}</span>
         </div>
       </div>
-  <div class="userInfo" *ngIf="userInfo">
+  <div class="userInfo" >
       <ion-label class="user-name">{{userInfo?.name}} {{userInfo?.surname}}</ion-label>
 
     <ion-avatar id="profileImage" >
