@@ -1,6 +1,6 @@
 import { Component, OnInit} from '@angular/core';
-import { ProposalService } from '../services/proposal.service';
-import { Proposal, PositionType, ProposalMapper } from '../core/models/proposal';
+import { ProposalService } from '../_services/proposal.service';
+import { Proposal, PositionType, ProposalMapper } from '../_models/proposal';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { NativeGeocoder,NativeGeocoderOptions, NativeGeocoderResult } from '@ionic-native/native-geocoder/ngx';
 import {  ModalController, LoadingController, PopoverController, ToastController } from '@ionic/angular';
@@ -8,8 +8,8 @@ import { CreateProposalComponent } from '../create-proposal/create-proposal.comp
 import { OverlayEventDetail } from '@ionic/core';
 import { ProposalThreeDotsPopoverComponent } from '../proposal-three-dots-popover/proposal-three-dots-popover.component';
 import { Place } from '../autocomplete-input/autocomplete-input.component';
-import { withCommaOrEmpty, joinWithCommaOrEmpty } from '../core/utils/utils';
-import { UserService } from '../services/user.service';
+import { withCommaOrEmpty, joinWithCommaOrEmpty } from '../_utils/utils';
+import { UserService } from '../_services/user.service';
 
 @Component({
   selector: 'app-proposals',

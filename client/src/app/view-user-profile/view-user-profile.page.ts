@@ -1,11 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { UserService } from '../services/user.service';
-import { User, UserMapper } from '../core/models/user';
+import { UserService } from '../_services/user.service';
+import { User, UserMapper } from '../_models/user';
 import { Location } from '@angular/common';
 import { ModalController } from '@ionic/angular';
 import { ImageModalComponent } from '../image-modal/image-modal.component';
-import { removeObjectFromArray } from '../core/utils/utils';
 
 const COLUMN_COUNT = 4
 @Component({

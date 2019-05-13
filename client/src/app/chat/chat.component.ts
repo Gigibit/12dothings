@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { ToastController } from '@ionic/angular';
-import { Observable } from 'rxjs';
-import { ChatService } from '../services/chat.service';
+import { ChatService } from '../_services/chat.service';
  
 @Component({
   selector: 'app-chat',

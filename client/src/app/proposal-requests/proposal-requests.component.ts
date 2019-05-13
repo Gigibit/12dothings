@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { ProposalService } from '../services/proposal.service';
-import { Request, RequestState } from '../core/models/request';
+import { ProposalService } from '../_services/proposal.service';
+import { Request, RequestState } from '../_models/request';
 import { NavParams, ModalController, ActionSheetController, LoadingController } from '@ionic/angular';
-import { removeObjectFromArray } from '../core/utils/utils';
+import { removeObjectFromArray } from '../_utils/utils';
 
 @Component({
   selector: 'app-proposal-requests',

@@ -1,14 +1,14 @@
 import { Component, OnInit, ChangeDetectorRef, NgZone } from '@angular/core';
-import { Proposal, ProposalMapper } from '../core/models/proposal';
-import { UserService } from '../services/user.service';
-import { User, UserMapper } from '../core/models/user';
+import { Proposal, ProposalMapper } from '../_models/proposal';
+import { UserService } from '../_services/user.service';
+import { User, UserMapper } from '../_models/user';
 import { ToastController, ActionSheetController, Platform, LoadingController, ModalController } from '@ionic/angular';
 import { PictureSourceType } from '@ionic-native/Camera/ngx';
 import { Location } from '@angular/common';
-import { ProposalService } from '../services/proposal.service';
+import { ProposalService } from '../_services/proposal.service';
 import { ProposalRequestsComponent } from '../proposal-requests/proposal-requests.component';
 import { OverlayEventDetail } from '@ionic/core';
-import { RequestState } from '../core/models/request';
+import { RequestState } from '../_models/request';
 import { ImageModalComponent } from '../image-modal/image-modal.component';
 
 const COLUMN_COUNT = 4

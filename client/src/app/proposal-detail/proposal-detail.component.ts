@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { ProposalService } from '../services/proposal.service';
-import { Proposal, ProposalMapper } from '../core/models/proposal';
+import { ProposalService } from '../_services/proposal.service';
+import { Proposal, ProposalMapper } from '../_models/proposal';
 import { ActivatedRoute } from '@angular/router';
-import { User, UserMapper } from '../core/models/user';
+import { User, UserMapper } from '../_models/user';
 import { Location } from '@angular/common';
-import { RequestState } from '../core/models/request';
+import { RequestState } from '../_models/request';
 
 @Component({
   selector: 'app-proposal-detail',
