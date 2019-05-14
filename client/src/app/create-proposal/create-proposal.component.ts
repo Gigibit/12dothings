@@ -88,6 +88,8 @@ export class CreateProposalComponent implements OnInit {
     this.proposalsService.createProposal({
       title: this.proposalForm.controls['title'].value,
       description : this.proposalForm.controls['description'].value,
+      district : this.district.label,
+      city : this.selectedCity,
       // useOwnerPhoto: this.useOwnerPhoto,
       autoAcceptRequest : this.requestsAutoaccept,
       position: {

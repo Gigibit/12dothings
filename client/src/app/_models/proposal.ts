@@ -11,6 +11,8 @@ export interface Proposal{
     users? : User[]
     createdBy?: string
     createdAt?: string
+    district? : string
+    city? : string
     joinRequests? : Request[]
     ownerInfo?: User
     autoAcceptRequest?:Boolean
