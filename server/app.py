@@ -81,11 +81,31 @@ def send_email_confirmation(email):
 
 '''
 
+
+
+@app.route('/api/update-address', methods=['POST'])
+def update_address():
+    access_token    = request.headers.get('auth-token',None)
+    if access_token:
+        user, id, email             = get_user(access_token)
+        if id and email:
+            address = request.get_json().get('address', '')
+            
+            result = db.users.update_one({'_id': ObjectId(id)}, {
+                            'address': address
+                        })
+            return Responses.success({'updated' : 'true' if result.matched_count > 0 else 'false' }) 
+        else:
+            return Responses.unauthorized()
+
+    else:
+        return Responses.unauthorized()
+
+
+
 @app.route('/api/get-context', methods=['GET'])
 def get_user_context():
-    print('ok')
     access_token    = request.headers.get('auth-token',None)
-    print('ok po')
     if access_token:
         user, id, email             = get_user(access_token)
         if id and email:

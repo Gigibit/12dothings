@@ -11,6 +11,7 @@ export interface User{
     props? : string[]
     iLike?:  boolean
     token? : string
+    address?: string
 
 }
 
@@ -27,6 +28,7 @@ export class UserMapper{
             imgs: data['imgs'],
             props: data['props'],
             email: data['email'],
+            address: data['address'],
             token: data['token']
         } : null
     }

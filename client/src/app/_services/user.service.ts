@@ -29,8 +29,7 @@ export class UserService {
     private platform: Platform,
     private camera: Camera,
     private auth: AuthService
-    ) {
-    }
+    ) {}
     
     getContext(){
       return this.http.get( CONTEXT )
