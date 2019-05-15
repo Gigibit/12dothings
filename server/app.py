@@ -123,7 +123,7 @@ def get_user_context():
             
             return jsonify({
                 'user_info'                  : slice_id(db.users.find_one( { 'email' : email}, USER_FOR_HIM )),
-                'own_proposals'              : slice_ids(db.proposals.find( { 'created_by': id })),
+                'own_proposals'              : slice_ids(db.proposals.find( { 'created_by': { '_id' : ObjectId(id) }})),
                 'joined_proposals'           : slice_ids(db.proposals.find( {'users' : id },  { 'join_requests': 0} )),
                 'requested_proposals'        : dumps(requests)
             })
@@ -136,6 +136,16 @@ def get_user_context():
 @app.route('/api/get-proposals-by-user/<id>')
 def get_proposal_by_user(id):
     return slice_ids(dumps(db.proposals.find({ 'users' : id })))
+
+
+
+'''
+    GET -> nation_filter (must be a nation)
+           longitude 
+           latitude
+
+'''
+
 
 @app.route('/api/proposals', methods=['GET', 'POST'])
 def proposals():
@@ -162,9 +172,16 @@ def proposals():
                                 ])
                             },
                          'created_by': {
-                             '$nin' : current_user.get('blocked_users', [])
+                            '_id': {
+                             '$nin' : [ ObjectId(x['_id']) for user in current_user.get('blocked_users', []) ]
+                            }
                          }
                         }
+                proposal_nation_filter = request.args.get('nation_filter', None)
+
+                if proposal_nation_filter:
+                    query['created_by']['nation'] = proposal_nation_filter
+
                 proposals = db.proposals.find(query)
 
                 return Responses.success( { 'data' : [slice_id(x) for x in proposals ] } )
@@ -177,7 +194,7 @@ def proposals():
             user, owner_id, email             = get_user(access_token)        
             #TODO: map all the fields needed
             proposal = proposal_request
-            proposal['created_by'] = owner_id
+            proposal['created_by'] = db.users.find_one( {'_id': owner_id }, USER_FOR_SYNTHESIS )
             proposal['owner_info'] = slice_id(db.users.find_one({'_id':ObjectId(owner_id)}, USER_FOR_SYNTHESIS))
             proposal['users'] = []
             proposal['join_requests'] = []
@@ -491,7 +508,7 @@ def edit_request_state(state):
         proposal_id     = request_body['proposal_id']
         user_to_approve = request_body['user_to_approve']
         proposal = db.proposals.find_one({'_id': ObjectId(proposal_id)})
-        if proposal['created_by'] == id:
+        if str(proposal['created_by']['_id']) == id:
             if user_to_approve not in proposal['users']:
                 try:
 
