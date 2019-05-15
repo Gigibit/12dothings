@@ -1,12 +1,11 @@
     ion-label{
         color: #222;
     }
-    ion-header{
-        position: relative;
-    }
+    
     .searchbar-wrapper {
         transition: width 1s ease-in-out;
-        float: right;
+        position: absolute;
+        right: 0;
     }
     .searchbar-wrapper.opened{
         width: 100%;
@@ -15,21 +14,21 @@
         width: 45px;
     }
     .result-list{
-        position: absolute;
-        z-index: 9999999;
-        width: 100%;
+        position: fixed;
+        z-index: 7000;
+        width: 69%;
+        border: 0.5px solid #ccc;
     }
     ion-searchbar{
         font-size: 14px;
     }
-
+    
     .output-result{
         position: absolute;
-        width: 100%;
-        height: 85%;
-        background: white;
-        text-align: center;
-        padding-top: 14px;
-        font-size: 14px;
+        width: 80%;
+        text-align: left;
+        font-size: 12px;
         color: #222;
+        
     }
+  

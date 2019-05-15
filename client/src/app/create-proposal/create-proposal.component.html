@@ -1,0 +1,42 @@
+<ion-header>
+    <ion-toolbar>
+        <ion-button (click)="modalCtrl.dismiss(false)">
+            <ion-icon name="close"></ion-icon>
+        </ion-button>
+    </ion-toolbar>
+</ion-header>
+<ion-content padding>
+    <h3>create new proposal, please!</h3>
+    <form [formGroup]="proposalForm" novalidate>
+        <ion-item lines="none">
+            <ion-label position="floating">Title</ion-label>
+            <ion-input placeholder="put a title..." type="text" formControlName="title"></ion-input>
+        </ion-item>
+        <ion-item lines="none">
+            <ion-label class="autocomplete-title" position="stacked">City</ion-label>
+            <app-autocomplete-input ngDefaultControl formControlName="city"   [placeholder]="'City'"(onSearchResult)="onCitySelected($event)" ></app-autocomplete-input>
+        </ion-item>
+        
+        
+        <ion-item lines="none">
+            <ion-label class="autocomplete-title" position="stacked">District</ion-label>
+            <app-autocomplete-input ngDefaultControl formControlName="district"  [placeholder]="'District'" (onSearchResult)="onZoneSelected($event)" [region]="selectedCity" ></app-autocomplete-input>
+        </ion-item>
+        <ion-item lines="none">
+            <ion-label position="stacked">Description</ion-label>
+            <ion-textarea autocapitalize="on" placeholder="put a description..." formControlName="description"></ion-textarea>
+        </ion-item>
+    </form>
+    
+    <ion-item>
+        <ion-label class="accept-all-requests">Accept all requests</ion-label>
+        <ion-checkbox slot="end" [(ngModel)]="requestsAutoaccept"></ion-checkbox>
+    </ion-item>
+    <!-- ion-item>
+        <ion-label>Use your own photo!</ion-label>
+        <ion-checkbox slot="end" [(ngModel)]="useOwnerPhoto"></ion-checkbox>
+    </ion-item -->
+</ion-content>
+<ion-footer>
+    <ion-button [disabled]="proposalForm.invalid" (click)="create()" size="large"  expand="block">create</ion-button>
+</ion-footer>

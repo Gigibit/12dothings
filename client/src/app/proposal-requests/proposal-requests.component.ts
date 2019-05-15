@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ProposalService } from '../_services/proposal.service';
 import { Request, RequestState } from '../_models/request';
-import { NavParams, ModalController, ActionSheetController, LoadingController } from '@ionic/angular';
+import { NavParams, ModalController, ActionSheetController, LoadingController, IonItemSliding } from '@ionic/angular';
 import { removeObjectFromArray } from '../_utils/utils';
 
 @Component({
@@ -24,7 +24,24 @@ export class ProposalRequestsComponent implements OnInit {
     this.requests= this.navParams.get('joinRequests');
     console.log(this.requests ? this.requests : 'nend')
   }
-
+  onSwipe(item: IonItemSliding, request:Request) {
+    item.getSlidingRatio().then(percent=>{
+      removeObjectFromArray(this.requests, request)
+      item.close()
+      console.log(percent)
+      if (percent > 0) {
+        // positive deny
+        console.log('right side');
+      } else {
+        // negative allow
+        console.log('left side');
+      }
+      if (Math.abs(percent) > 1) {
+        console.log('overscroll');
+      }
+    });
+ 
+  }
   async allow(slidingItem, request:Request){
     if(slidingItem) slidingItem.close()
     const loading = await this.load()
@@ -35,6 +52,9 @@ export class ProposalRequestsComponent implements OnInit {
       this.requests = removeObjectFromArray(this.requests,request)
       if(this.requests.length == 0) this.modalCtrl.dismiss(true)    
       this.somethingChanged = data['status'] == 'OK'
+    }, error=>{
+      console.log(error);
+      loading.dismiss()
     })
   }
   async deny(slidingItem, request:Request){
@@ -50,6 +70,9 @@ export class ProposalRequestsComponent implements OnInit {
       if(this.requests.length == 0) this.modalCtrl.dismiss(true)
       this.somethingChanged = data['status'] == 'OK'
     
+    }, error=>{
+      console.log(error);
+      loading.dismiss()
     })
   }
  

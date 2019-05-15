@@ -58,18 +58,28 @@ export class AutocompleteInputComponent {
   constructor(private zone: NgZone, private eRef: ElementRef) { }
 
   @HostListener('document:click', ['$event'])
-  clickout(event) { this.isSearchboxOpened = this.eRef.nativeElement.contains(event.target); }
-
+  clickout(event) { 
+    this.isSearchboxOpened = this.eRef.nativeElement.contains(event.target); 
+    if(!this.isSearchboxOpened){
+      this.places=[]
+      this.places.length = 0
+    }
+  }
+  searchCall : any//NodeJS.Timeout
   updateSearchResults(){
-    if(this.isSearchboxOpened)
-    provider.search({ 
-      query: this.input  + ' ' + ( this.region ? this.region.split(',')[0] : '' )  
-    })
-    .then( (results) => { 
-      this.zone.run(()=> {
-        this.places = this.uniq(results)//.filter( result => this.isRelevant(result)))
-      })
-    });
+    if(this.isSearchboxOpened){
+      clearTimeout(this.searchCall)
+      this.searchCall = setTimeout( ()=>{
+        provider.search({ 
+          query: this.input  + ' ' + ( this.region ? this.region.split(',')[0] : '' )  
+        })
+        .then( (results) => { 
+          this.zone.run(()=> {
+            this.places = this.uniq(results)//.filter( result => this.isRelevant(result)))
+          })
+        })
+      }, 300);
+    }
   }
   // isRelevant( result ){
 
@@ -97,6 +107,7 @@ export class AutocompleteInputComponent {
   }
   onSerachResultTap(item){ 
     this.places=[]
+    this.places.length = 0
     this.isSearchboxOpened = false
     this.onSearchResult.emit(item)
 

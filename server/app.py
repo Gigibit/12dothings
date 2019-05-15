@@ -91,9 +91,10 @@ def update_address():
         if id and email:
             address = request.get_json().get('address', '')
             
-            result = db.users.update_one({'_id': ObjectId(id)}, {
+            result = db.users.update_one({'_id': ObjectId(id)}, {'$set': {
                             'address': address
-                        })
+                        }
+                    })
             return Responses.success({'updated' : 'true' if result.matched_count > 0 else 'false' }) 
         else:
             return Responses.unauthorized()

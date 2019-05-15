@@ -18,14 +18,16 @@ export function removeObjectFromArray(array: any[],obj:any){
     return array;
   }
 export function withCommaOrEmpty(str: string){
-  return str && str.length > 0 ? str + " ," : ""
+  return str && str.length > 0 ? str + ", " : ""
 }
 
 export function joinWithCommaOrEmpty(...str: string[]){
-  if(!str) return ""
-  else {
-    var res = ""
-    str.forEach(arg=> res += withCommaOrEmpty(arg))
-    return res
-  }
+  if(!str || str.length < 0) return ""
+  
+  var res = ""
+  for(var i = 0 ; i < str.length - 1 ; i++)
+    res += withCommaOrEmpty(str[i])
+  
+  res += str[ str.length - 1 ]
+  return res
 }

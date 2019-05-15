@@ -57,6 +57,7 @@ export class ProposalsComponent implements OnInit {
         this.geoAccuracy = resp.coords.accuracy;
         this.getGeoencoder(this.geoLatitude,this.geoLongitude);
        }).catch((error) => {
+         console.log(error)
        });
     }
   
@@ -64,8 +65,10 @@ export class ProposalsComponent implements OnInit {
     getGeoencoder(latitude,longitude){
       this.nativeGeocoder.reverseGeocode(latitude, longitude, this.geoencoderOptions)
       .then((result: NativeGeocoderResult[]) => {
-        this.geoAddress = joinWithCommaOrEmpty( /* result[0].thoroughfare,*/ result[0].locality , result[0].subLocality , result[0].administrativeArea , result[0].countryName );
-        this.userService.updateAddress(this.geoAddress)
+        this.geoAddress = joinWithCommaOrEmpty( /* result[0].thoroughfare,*/ result[0].locality , result[0].subLocality , /* result[0].administrativeArea ,*/ result[0].countryName );
+        this.userService.updateAddress(this.geoAddress).subscribe(data=>{
+          console.log(data)
+        })
       })
       .catch((error: any) => {
         console.log(error)

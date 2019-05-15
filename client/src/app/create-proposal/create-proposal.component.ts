@@ -8,44 +8,7 @@ import { ModalController, LoadingController } from '@ionic/angular';
 
 @Component({
   selector: 'app-create-proposal',
-  template: `
-    <ion-header>
-      <ion-toolbar>
-      <ion-button (click)="modalCtrl.dismiss(false)">
-        <ion-icon name="close"></ion-icon>
-      </ion-button>
-      <ion-title>create new proposal, please!</ion-title>
-    </ion-toolbar>
-    </ion-header>
-    <ion-content>
-    <form [formGroup]="proposalForm" novalidate>
-      <ion-item>
-        <ion-label>Name</ion-label>
-        <ion-input type="text" formControlName="title"></ion-input>
-      </ion-item>
-      City
-      <app-autocomplete-input ngDefaultControl formControlName="city"   [placeholder]="'City'"(onSearchResult)="onCitySelected($event)" ></app-autocomplete-input>
-      District
-      <app-autocomplete-input ngDefaultControl formControlName="district"  [placeholder]="'District'" (onSearchResult)="onZoneSelected($event)" [region]="selectedCity" ></app-autocomplete-input>
-      <ion-item>
-        <ion-label>Description</ion-label>
-        <ion-textarea formControlName="description"></ion-textarea>
-      </ion-item>
-
-    </form>
-    <ion-item>
-      <ion-label>Accept all requests</ion-label>
-      <ion-checkbox slot="end" [(ngModel)]="requestsAutoaccept"></ion-checkbox>
-    </ion-item>
-    <!-- ion-item>
-      <ion-label>Use your own photo!</ion-label>
-      <ion-checkbox slot="end" [(ngModel)]="useOwnerPhoto"></ion-checkbox>
-    </ion-item -->
-    </ion-content>
-    <ion-footer>
-      <ion-button [disabled]="proposalForm.invalid" (click)="create()" size="large"  expand="block">create</ion-button>
-    </ion-footer>
-  `,
+  templateUrl: './create-proposal.component.html',
   styleUrls: ['./create-proposal.component.scss'],
 })
 export class CreateProposalComponent implements OnInit {
@@ -88,8 +51,8 @@ export class CreateProposalComponent implements OnInit {
     this.proposalsService.createProposal({
       title: this.proposalForm.controls['title'].value,
       description : this.proposalForm.controls['description'].value,
-      district : this.district.label,
       city : this.selectedCity,
+      district : this.district.label,
       // useOwnerPhoto: this.useOwnerPhoto,
       autoAcceptRequest : this.requestsAutoaccept,
       position: {
