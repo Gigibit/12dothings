@@ -91,10 +91,9 @@ def update_address():
         if id and email:
             address = request.get_json().get('address', '')
             
-            result = db.users.update_one({'_id': ObjectId(id)}, {'$set': {
+            result = db.users.update_one({'_id': ObjectId(id)}, {
                             'address': address
-                        }
-                    })
+                        })
             return Responses.success({'updated' : 'true' if result.matched_count > 0 else 'false' }) 
         else:
             return Responses.unauthorized()
@@ -123,7 +122,7 @@ def get_user_context():
             
             return jsonify({
                 'user_info'                  : slice_id(db.users.find_one( { 'email' : email}, USER_FOR_HIM )),
-                'own_proposals'              : slice_ids(db.proposals.find( { 'created_by': { '_id' : ObjectId(id) }})),
+                'own_proposals'              : slice_ids(db.proposals.find( { 'created_by': id })),
                 'joined_proposals'           : slice_ids(db.proposals.find( {'users' : id },  { 'join_requests': 0} )),
                 'requested_proposals'        : dumps(requests)
             })
@@ -172,8 +171,8 @@ def proposals():
                                 ])
                             },
                          'created_by': {
-                            '_id': {
-                             '$nin' : [ ObjectId(x['_id']) for user in current_user.get('blocked_users', []) ]
+                            'id': {
+                             '$nin' : current_user.get('blocked_users', [])
                             }
                          }
                         }
@@ -194,7 +193,7 @@ def proposals():
             user, owner_id, email             = get_user(access_token)        
             #TODO: map all the fields needed
             proposal = proposal_request
-            proposal['created_by'] = db.users.find_one( {'_id': owner_id }, USER_FOR_SYNTHESIS )
+            proposal['created_by'] = owner_id
             proposal['owner_info'] = slice_id(db.users.find_one({'_id':ObjectId(owner_id)}, USER_FOR_SYNTHESIS))
             proposal['users'] = []
             proposal['join_requests'] = []
@@ -508,7 +507,7 @@ def edit_request_state(state):
         proposal_id     = request_body['proposal_id']
         user_to_approve = request_body['user_to_approve']
         proposal = db.proposals.find_one({'_id': ObjectId(proposal_id)})
-        if str(proposal['created_by']['_id']) == id:
+        if proposal['created_by'] == id:
             if user_to_approve not in proposal['users']:
                 try:
 
