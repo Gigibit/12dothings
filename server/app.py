@@ -347,6 +347,7 @@ def register():
                 'name' : user['name'],
                 'surname' : user['surname'],
                 'email': user['email'],
+                'country': user['country'],
                 'blocked_users' : [],
                 'password': generate_password_hash(user['password']),
                 'profile_img'  : user.get('img', DEFAULT_USER_IMG),

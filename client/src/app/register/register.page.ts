@@ -14,7 +14,6 @@ export class RegisterPage implements OnInit {
   ngOnInit() {
   }
   register(form) {
-    console.log(form.value)
     this.authService.register(form.value).subscribe(data=>{
       if(data['status_code'] == 200){
         this.location.back()

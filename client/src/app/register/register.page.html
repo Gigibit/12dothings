@@ -21,6 +21,11 @@
                   <ion-input name="surname" type="text" placeholder="Dal Sacco" ngModel required></ion-input>
                 </ion-item>
                 <ion-item>
+                  <ion-select>
+                    <ion-select-option name="country" ngModel *ngFor="let contry of countries">{{country.name}}</ion-select-option>
+                  </ion-select>
+                </ion-item>
+                <ion-item>
                   <ion-input name="email" type="email" placeholder="your@email.com" ngModel required></ion-input>
                 </ion-item>
                 <ion-item>
@@ -29,6 +34,7 @@
                 <ion-item>
                   <ion-input name="confirm_password" type="password" placeholder="Confirm password" ngModel required></ion-input>
                 </ion-item>
+          
           </div>
           <div padding>
             <ion-button size="large" type="submit" [disabled]="f.invalid" expand="block">Register</ion-button>
