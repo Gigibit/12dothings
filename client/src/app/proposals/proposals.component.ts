@@ -1,9 +1,9 @@
-import { Component, OnInit} from '@angular/core';
+import { Component, OnInit, ViewChild} from '@angular/core';
 import { ProposalService } from '../_services/proposal.service';
 import { Proposal, PositionType, ProposalMapper } from '../_models/proposal';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { NativeGeocoder,NativeGeocoderOptions, NativeGeocoderResult } from '@ionic-native/native-geocoder/ngx';
-import {  ModalController, LoadingController, PopoverController, ToastController } from '@ionic/angular';
+import {  ModalController, LoadingController, PopoverController, ToastController, IonSelect } from '@ionic/angular';
 import { CreateProposalComponent } from '../create-proposal/create-proposal.component';
 import { OverlayEventDetail } from '@ionic/core';
 import { ProposalThreeDotsPopoverComponent } from '../proposal-three-dots-popover/proposal-three-dots-popover.component';
@@ -11,12 +11,22 @@ import { Place } from '../autocomplete-input/autocomplete-input.component';
 import { withCommaOrEmpty, joinWithCommaOrEmpty } from '../_utils/utils';
 import { UserService } from '../_services/user.service';
 
+const USE_OWN_LOCATION = 'useMyPosition'
+const USE_OWN_LANGUAGE = 'useMyLanguage'
+
 @Component({
   selector: 'app-proposals',
   templateUrl: './proposals.component.html',
   styleUrls: ['./proposals.component.scss'],
 })
 export class ProposalsComponent implements OnInit {
+  filterSelectOptions = {
+    header: 'filter',
+    // subHeader: 'pllllll',
+    // message: '$1.00 per topping',
+  };
+
+  filter = [USE_OWN_LOCATION, USE_OWN_LANGUAGE]
 
   lastSelectedZone : Place
   proposals: Proposal[]
@@ -25,6 +35,7 @@ export class ProposalsComponent implements OnInit {
   geoAccuracy:number;
   geoAddress: string;
   useMyPosition = true
+  useMyLanguage = true
   maxDistance = 5000
   watchLocationUpdates:any; 
   loading:any;
@@ -84,6 +95,16 @@ export class ProposalsComponent implements OnInit {
         }  
       
     }
+    onFilterChanged(){
+      let useMyPosition = this.filter.indexOf(USE_OWN_LOCATION) != -1
+      this.useMyLanguage = this.filter.indexOf(USE_OWN_LANGUAGE) != -1
+      if(useMyPosition != this.useMyPosition){
+        this.useMyPosition = useMyPosition
+        this.onUseMyPositionStatusChanged()
+      }
+      
+    }
+
     onZoneSelected(zone: Place){
       this.lastSelectedZone = zone;
       this.geoLatitude = Number.parseFloat(zone.y)

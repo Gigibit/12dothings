@@ -11,8 +11,10 @@
 
 <ion-content>
   <ion-item>
-    <ion-label>use your location</ion-label>
-    <ion-checkbox (ionChange)="onUseMyPositionStatusChanged()" [(ngModel)]="useMyPosition" value="true"></ion-checkbox>
+    <ion-select slot="end" selectedText="filters" [interfaceOptions]="filterSelectOptions" multiple="true" (ionChange)="onFilterChanged()" [(ngModel)]="filter" >
+      <ion-select-option value="useMyPosition" selected="selected">your location</ion-select-option>
+      <ion-select-option value="useMyLanguage" selected="selected">your language</ion-select-option>
+    </ion-select>
   </ion-item>
   <app-autocomplete-input [static]="true" *ngIf="!useMyPosition" ngDefaultControl  [placeholder]="'district'" (onSearchResult)="onZoneSelected($event)" [region]="selectedCity" ></app-autocomplete-input>
   <ion-range (mouseup)="onRangeChanged()" (touchend)="onRangeChanged()" class="col-md-12" pin="true" [(ngModel)]="maxDistance"  min="50" max="50000" step="2">
