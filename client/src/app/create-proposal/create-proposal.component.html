@@ -8,7 +8,7 @@
 <ion-content padding>
     <h3>create new proposal, please!</h3>
     <form [formGroup]="proposalForm" novalidate>
-        <ion-select slot="end" interface="popover" #languageSelect formControlName="language" [(ngModel)]="language">
+        <ion-select slot="end" interface="popover" #languageSelect formControlName="language">
             <ion-select-option *ngFor="let language of languages | keyvalue" [value]="language.value.name">{{language.value.name}}</ion-select-option>
         </ion-select>
         <ion-item lines="none">
