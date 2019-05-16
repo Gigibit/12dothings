@@ -17,14 +17,18 @@
         </div>
       </div>
   <div class="userInfo" >
-      <ion-label class="user-name">{{userInfo?.name}} {{userInfo?.surname}}</ion-label>
 
     <ion-avatar id="profileImage" >
       <ion-img [src]="userInfo.profileImg" ></ion-img>
     </ion-avatar>
+    <ion-label class="user-name">{{userInfo?.name}} {{userInfo?.surname}}</ion-label>
+
   </div>
   
-  <ion-label class="address" *ngIf="userInfo.address">{{userInfo.address}}</ion-label>
+  <ion-label class="address" *ngIf="userInfo.address">
+    <ion-icon name="pin"></ion-icon>
+    {{userInfo.address}}
+  </ion-label>
 
 
   <div class="gallery">

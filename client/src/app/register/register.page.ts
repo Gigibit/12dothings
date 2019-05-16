@@ -1,6 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { AuthService } from '../_services/auth.service';
 import { Location } from '@angular/common';
+import { Globalization } from '@ionic-native/globalization/ngx';
+import { languages, getLanguageByGlobalizationPrefix } from '../_datasources/languages';
+import { IonSelect } from '@ionic/angular';
 
 @Component({
   selector: 'app-register',
@@ -8,10 +11,21 @@ import { Location } from '@angular/common';
   styleUrls: ['./register.page.scss'],
 })
 export class RegisterPage implements OnInit {
+  @ViewChild('languageSelect') selectRef: IonSelect;
+  languages = languages
+  language : string
   constructor(
     private authService: AuthService,
-    private location: Location) { }
-  ngOnInit() {
+    private location: Location,
+    private globalization: Globalization) { 
+      this.globalization.getPreferredLanguage()
+        .then(res => {
+          this.language = getLanguageByGlobalizationPrefix(res)
+        })
+       .catch(e => console.log(e));
+    }
+  
+    ngOnInit() {
   }
   register(form) {
     this.authService.register(form.value).subscribe(data=>{

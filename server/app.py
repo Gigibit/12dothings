@@ -81,7 +81,15 @@ def send_email_confirmation(email):
 
 '''
 
-
+@app.route('/api/logout', methods=['GET'])
+def logout():
+    #TODO logout!!!
+    access_token    = request.headers.get('auth-token',None)
+    if access_token:
+        user, id, email             = get_user(access_token)
+        if id and email:
+            return Responses.success()
+    return Responses.empty()
 
 @app.route('/api/update-address', methods=['POST'])
 def update_address():
@@ -347,7 +355,7 @@ def register():
                 'name' : user['name'],
                 'surname' : user['surname'],
                 'email': user['email'],
-                'country': user['country'],
+                'language': user['language'],
                 'blocked_users' : [],
                 'password': generate_password_hash(user['password']),
                 'profile_img'  : user.get('img', DEFAULT_USER_IMG),
@@ -628,7 +636,9 @@ class Responses:
     def bad_request():
         return jsonify({ 'status' : 'ERROR', 'status_code' : 400 })
 
-
+    @staticmethod
+    def empty():
+        return jsonify({})
 if __name__ == '__main__':
    # init_db()
    # socketio.run(app, debug=True)

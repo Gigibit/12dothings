@@ -14,16 +14,16 @@
             <h3>Register</h3>
           </div>
           <div padding>
+              <ion-item lines="none">
+                  <ion-select slot="end" interface="popover" #languageSelect name="language" [(ngModel)]="language">
+                    <ion-select-option *ngFor="let language of languages | keyvalue" [value]="language.value.name">{{language.value.name}}</ion-select-option>
+                  </ion-select>
+                </ion-item>
               <ion-item>
                   <ion-input name="name" type="text" placeholder="Pippo" ngModel required></ion-input>
                 </ion-item>
                 <ion-item>
                   <ion-input name="surname" type="text" placeholder="Dal Sacco" ngModel required></ion-input>
-                </ion-item>
-                <ion-item>
-                  <ion-select>
-                    <ion-select-option name="country" ngModel *ngFor="let contry of countries">{{country.name}}</ion-select-option>
-                  </ion-select>
                 </ion-item>
                 <ion-item>
                   <ion-input name="email" type="email" placeholder="your@email.com" ngModel required></ion-input>

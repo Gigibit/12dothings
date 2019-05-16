@@ -11,6 +11,7 @@ const TOKEN_KEY = 'auth-token';
 
 const REGISTER_URL = AUTH_SERVER + '/api/register'
 const LOGIN_URL = AUTH_SERVER + '/api/login'
+const LOGOUT_URL = AUTH_SERVER + '/api/logout'
 
 @Injectable({
   providedIn: 'root'
@@ -54,6 +55,7 @@ export class AuthService {
     // remove user from local storage to log user out
     localStorage.removeItem('currentUser');
     this.currentUserSubject.next(null);
+    return this.http.get(LOGOUT_URL)
   }
   
   register(form){

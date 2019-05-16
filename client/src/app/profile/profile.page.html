@@ -3,7 +3,9 @@
     <ion-button (click)="location.back()">
       <ion-icon name="ios-arrow-back"></ion-icon>
     </ion-button>
-    <ion-title>profile</ion-title>
+    <div class="dots"  slot="ends" (click)="userPopover($event)">
+      <ion-icon name="more"></ion-icon>
+    </div>
   </ion-toolbar>
 </ion-header>
 

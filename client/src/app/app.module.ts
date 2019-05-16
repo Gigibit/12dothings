@@ -38,6 +38,8 @@ import { ImageModalComponent } from './image-modal/image-modal.component';
 import { ProposalThreeDotsPopoverComponent } from './proposal-three-dots-popover/proposal-three-dots-popover.component';
 import { ErrorInterceptor } from './_helpers/error.interceptor';
 import { JwtInterceptor } from './_helpers/jwt.interceptor';
+import { UserProfilePopoverComponent } from './user-profile-popover/user-profile-popover.component';
+import { Globalization } from '@ionic-native/globalization/ngx';
 
 
 
@@ -52,9 +54,10 @@ const config: SocketIoConfig = { url: 'http://localhost:3001/messages', options:
     ImageModalComponent,
     ProposalDetailComponent,
     AutocompleteInputComponent,
-    ProposalThreeDotsPopoverComponent
+    ProposalThreeDotsPopoverComponent,
+    UserProfilePopoverComponent
   ],
-  entryComponents: [ImageModalComponent, ProposalThreeDotsPopoverComponent],
+  entryComponents: [ImageModalComponent, ProposalThreeDotsPopoverComponent, UserProfilePopoverComponent],
   imports: [
     BrowserModule, 
     IonicModule.forRoot(), 
@@ -74,6 +77,7 @@ const config: SocketIoConfig = { url: 'http://localhost:3001/messages', options:
     SplashScreen,
     Geolocation,
     NativeGeocoder,
+    Globalization,
     Camera,
     File,
     WebView,

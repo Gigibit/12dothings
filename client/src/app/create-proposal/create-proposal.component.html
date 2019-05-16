@@ -8,9 +8,12 @@
 <ion-content padding>
     <h3>create new proposal, please!</h3>
     <form [formGroup]="proposalForm" novalidate>
+        <ion-select slot="end" interface="popover" #languageSelect formControlName="language" [(ngModel)]="language">
+            <ion-select-option *ngFor="let language of languages | keyvalue" [value]="language.value.name">{{language.value.name}}</ion-select-option>
+        </ion-select>
         <ion-item lines="none">
-            <ion-label position="floating">Title</ion-label>
-            <ion-input placeholder="put a title..." type="text" formControlName="title"></ion-input>
+            <ion-label >Title</ion-label>
+            <ion-input autocapitalize="on" class="width-80 shadowed bordered margin-left-5" placeholder="a title..." type="text" formControlName="title"></ion-input>
         </ion-item>
         <ion-item lines="none">
             <ion-label class="autocomplete-title" position="stacked">City</ion-label>
@@ -24,12 +27,12 @@
         </ion-item>
         <ion-item lines="none">
             <ion-label position="stacked">Description</ion-label>
-            <ion-textarea autocapitalize="on" placeholder="put a description..." formControlName="description"></ion-textarea>
+            <ion-textarea class="bordered margin-top-15"  autocapitalize="on" placeholder="a description..." formControlName="description"></ion-textarea>
         </ion-item>
     </form>
     
     <ion-item>
-        <ion-label class="accept-all-requests">Accept all requests</ion-label>
+        <ion-label class="autocomplete-title accept-all-requests">Accept all requests</ion-label>
         <ion-checkbox slot="end" [(ngModel)]="requestsAutoaccept"></ion-checkbox>
     </ion-item>
     <!-- ion-item>
