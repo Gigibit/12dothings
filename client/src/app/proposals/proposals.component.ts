@@ -8,7 +8,7 @@ import { CreateProposalComponent } from '../create-proposal/create-proposal.comp
 import { OverlayEventDetail } from '@ionic/core';
 import { ProposalThreeDotsPopoverComponent } from '../proposal-three-dots-popover/proposal-three-dots-popover.component';
 import { Place } from '../autocomplete-input/autocomplete-input.component';
-import { withCommaOrEmpty, joinWithCommaOrEmpty } from '../_utils/utils';
+import { withCommaOrEmpty, joinWithCommaOrEmpty } from '../_utils/functions';
 import { UserService } from '../_services/user.service';
 
 const USE_OWN_LOCATION = 'useMyPosition'

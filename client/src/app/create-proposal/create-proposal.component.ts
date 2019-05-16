@@ -6,6 +6,7 @@ import { PositionType } from '../_models/proposal';
 import { ModalController, LoadingController } from '@ionic/angular';
 import { Globalization } from '@ionic-native/globalization/ngx';
 import { languages, getLanguageByGlobalizationPrefix } from '../_datasources/languages';
+import { TranslateService } from '@ngx-translate/core';
 
 
 @Component({
@@ -27,6 +28,7 @@ export class CreateProposalComponent implements OnInit {
     private loadingCtrl: LoadingController,
     private proposalsService: ProposalService,
     private globalization: Globalization,
+    private translateService: TranslateService,
     private formBuilder: FormBuilder ) {
       this.proposalForm = this.formBuilder.group({
         title: ['', Validators.required],
@@ -75,10 +77,11 @@ export class CreateProposalComponent implements OnInit {
         }
       })
     }
-    load() {
-      return this.loadingCtrl.create({
+    async load() {
+      let message = await this.translateService.get('please_wait').toPromise()
+      return await this.loadingCtrl.create({
         spinner: null,
-        message: 'Please wait...',
+        message : message,
         translucent: true,
         cssClass: 'custom-class custom-loading'
       });

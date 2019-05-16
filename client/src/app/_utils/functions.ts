@@ -31,3 +31,9 @@ export function joinWithCommaOrEmpty(...str: string[]){
   res += str[ str.length - 1 ]
   return res
 }
+
+
+export function getErrorForCode(code: string){
+  
+  return code
+}

@@ -11,6 +11,7 @@ import { OverlayEventDetail } from '@ionic/core';
 import { RequestState } from '../_models/request';
 import { ImageModalComponent } from '../image-modal/image-modal.component';
 import { UserProfilePopoverComponent } from '../user-profile-popover/user-profile-popover.component';
+import { TranslateService } from '@ngx-translate/core';
 
 const COLUMN_COUNT = 4
 
@@ -33,6 +34,7 @@ export class ProfilePage implements OnInit {
     private actionSheetController: ActionSheetController, 
     private toastController: ToastController,
     private modalController: ModalController,
+    private translateService : TranslateService,
     private loadingController: LoadingController,
     private ref: ChangeDetectorRef, 
     private popoverController: PopoverController,
@@ -80,22 +82,29 @@ export class ProfilePage implements OnInit {
     }
     
     async selectImage() {
+
+      let selectImageSourceString = await this.translateService.get('select_image_source').toPromise()
+      let loadFromLibrariString = await this.translateService.get('load_from_library').toPromise()
+      let useCameraString = await this.translateService.get('use_camera').toPromise()
+      let cancelString = await this.translateService.get('cancel').toPromise()
+
+
       const actionSheet = await this.actionSheetController.create({
-        header: "Select Image source",
+        header: selectImageSourceString,
         buttons: [{
-          text: 'Load from Library',
+          text: loadFromLibrariString,
           handler: () => {
             this.userService.takePicture(PictureSourceType.PHOTOLIBRARY, (uri)=> this.images.push(uri));
           }
         },
         {
-          text: 'Use Camera',
+          text: useCameraString,
           handler: () => {
             this.userService.takePicture(PictureSourceType.CAMERA, (uri)=> this.images.push(uri) );
           }
         },
         {
-          text: 'Cancel',
+          text: cancelString,
           role: 'cancel'
         }
       ]
@@ -140,8 +149,9 @@ export class ProfilePage implements OnInit {
      modal.present();
     }
     else{
+      let thereAreNoPendingRequestMessage = await this.translateService.get('there_are_no_pending_requests').toPromise()
       let toast = await this.toastController.create({
-          message: 'There are no pending requests!',
+          message: thereAreNoPendingRequestMessage,
           duration: 3000,
           position: 'top'
       })

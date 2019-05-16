@@ -15,15 +15,15 @@
           </div>
           <div padding>
               <ion-item lines="none">
-                  <ion-select slot="end" interface="popover" #languageSelect name="language" [(ngModel)]="language">
+                  <ion-select slot="end" interface="popover" #languageSelect selectedText="{{ 'language' | translate}}" name="language" [(ngModel)]="language">
                     <ion-select-option *ngFor="let language of languages | keyvalue" [value]="language.value.name">{{language.value.name}}</ion-select-option>
                   </ion-select>
                 </ion-item>
               <ion-item>
-                  <ion-input name="name" type="text" placeholder="Pippo" ngModel required></ion-input>
+                  <ion-input name="name" type="text" placeholder="{{ 'fake_name' | translate }}" ngModel required></ion-input>
                 </ion-item>
                 <ion-item>
-                  <ion-input name="surname" type="text" placeholder="Dal Sacco" ngModel required></ion-input>
+                  <ion-input name="surname" type="text" placeholder="{{ 'fake_surname' | translate }}" ngModel required></ion-input>
                 </ion-item>
                 <ion-item>
                   <ion-input name="email" type="email" placeholder="your@email.com" ngModel required></ion-input>
@@ -32,12 +32,12 @@
                   <ion-input name="password" type="password" placeholder="Password" ngModel required></ion-input>
                 </ion-item>
                 <ion-item>
-                  <ion-input name="confirm_password" type="password" placeholder="Confirm password" ngModel required></ion-input>
+                  <ion-input name="confirm_password" type="password" placeholder="{{ 'confirm_password' | translate }}" ngModel required></ion-input>
                 </ion-item>
           
           </div>
           <div padding>
-            <ion-button size="large" type="submit" [disabled]="f.invalid" expand="block">Register</ion-button>
+            <ion-button size="large" type="submit" [disabled]="f.invalid" expand="block">{{ 'register' | translate }}</ion-button>
           </div>
         </ion-col>
       </ion-row>

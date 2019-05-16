@@ -6,12 +6,16 @@ import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 
+import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { HttpModule, Http } from '@angular/http';
+
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { ProposalsComponent } from './proposals/proposals.component';
 import { CreateProposalComponent } from './create-proposal/create-proposal.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS, HttpClient } from '@angular/common/http';
 
 import { IonicStorageModule } from '@ionic/storage';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -40,10 +44,16 @@ import { ErrorInterceptor } from './_helpers/error.interceptor';
 import { JwtInterceptor } from './_helpers/jwt.interceptor';
 import { UserProfilePopoverComponent } from './user-profile-popover/user-profile-popover.component';
 import { Globalization } from '@ionic-native/globalization/ngx';
+import { AlertComponent } from './alert/alert.component';
 
 
 
 const config: SocketIoConfig = { url: 'http://localhost:3001/messages', options: {} };
+
+function createTranslateLoader(http: HttpClient) {
+  return new TranslateHttpLoader(http, './assets/i18n/', '.json');
+}
+
 
 @NgModule({
   declarations: [
@@ -55,6 +65,7 @@ const config: SocketIoConfig = { url: 'http://localhost:3001/messages', options:
     ProposalDetailComponent,
     AutocompleteInputComponent,
     ProposalThreeDotsPopoverComponent,
+    AlertComponent,
     UserProfilePopoverComponent
   ],
   entryComponents: [ImageModalComponent, ProposalThreeDotsPopoverComponent, UserProfilePopoverComponent],
@@ -67,6 +78,13 @@ const config: SocketIoConfig = { url: 'http://localhost:3001/messages', options:
     LoginPageModule,
     ProfilePageModule,
     RegisterPageModule,
+    TranslateModule.forRoot({
+      loader: {
+        provide: TranslateLoader,
+        useFactory: (createTranslateLoader),
+        deps: [Http]
+      }
+    }),
     ReactiveFormsModule,
     IonicStorageModule.forRoot(),
     BrowserAnimationsModule,
@@ -90,3 +108,5 @@ const config: SocketIoConfig = { url: 'http://localhost:3001/messages', options:
   bootstrap: [AppComponent]
 })
 export class AppModule {}
+
+

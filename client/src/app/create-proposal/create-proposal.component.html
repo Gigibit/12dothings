@@ -6,33 +6,33 @@
     </ion-toolbar>
 </ion-header>
 <ion-content padding>
-    <h3>create new proposal, please!</h3>
+    <h3>{{'create_new_proposal_title' | translate }}</h3>
     <form [formGroup]="proposalForm" novalidate>
         <ion-select slot="end" interface="popover" #languageSelect formControlName="language">
             <ion-select-option *ngFor="let language of languages | keyvalue" [value]="language.value.name">{{language.value.name}}</ion-select-option>
         </ion-select>
         <ion-item lines="none">
-            <ion-label >Title</ion-label>
-            <ion-input autocapitalize="on" class="width-80 shadowed bordered margin-left-5" placeholder="a title..." type="text" formControlName="title"></ion-input>
+            <ion-label >{{ 'title' | translate }}</ion-label>
+            <ion-input autocapitalize="on" class="width-80 shadowed bordered margin-left-5" placeholder="{{ 'a title...' | translate }}" type="text" formControlName="title"></ion-input>
         </ion-item>
         <ion-item lines="none">
-            <ion-label class="autocomplete-title" position="stacked">City</ion-label>
-            <app-autocomplete-input ngDefaultControl formControlName="city"   [placeholder]="'City'"(onSearchResult)="onCitySelected($event)" ></app-autocomplete-input>
+            <ion-label class="autocomplete-title" position="stacked">{{ 'city' | translate }}</ion-label>
+            <app-autocomplete-input ngDefaultControl formControlName="city"   placeholder="{{ 'city' | translate }}"(onSearchResult)="onCitySelected($event)" ></app-autocomplete-input>
         </ion-item>
         
         
         <ion-item lines="none">
-            <ion-label class="autocomplete-title" position="stacked">District</ion-label>
-            <app-autocomplete-input ngDefaultControl formControlName="district"  [placeholder]="'District'" (onSearchResult)="onZoneSelected($event)" [region]="selectedCity" ></app-autocomplete-input>
+            <ion-label class="autocomplete-title" position="stacked">{{ 'district' | translate }}</ion-label>
+            <app-autocomplete-input ngDefaultControl formControlName="district"  placeholder="{{'district' | translate }}" (onSearchResult)="onZoneSelected($event)" [region]="selectedCity" ></app-autocomplete-input>
         </ion-item>
         <ion-item lines="none">
             <ion-label position="stacked">Description</ion-label>
-            <ion-textarea class="bordered margin-top-15"  autocapitalize="on" placeholder="a description..." formControlName="description"></ion-textarea>
+            <ion-textarea class="bordered margin-top-15"  autocapitalize="on" placeholder="{{'a description...' | translate }}" formControlName="description"></ion-textarea>
         </ion-item>
     </form>
     
     <ion-item>
-        <ion-label class="autocomplete-title accept-all-requests">Accept all requests</ion-label>
+        <ion-label class="autocomplete-title accept-all-requests">{{ 'accept_all_requests' | translate }}</ion-label>
         <ion-checkbox slot="end" [(ngModel)]="requestsAutoaccept"></ion-checkbox>
     </ion-item>
     <!-- ion-item>
@@ -41,5 +41,5 @@
     </ion-item -->
 </ion-content>
 <ion-footer>
-    <ion-button [disabled]="proposalForm.invalid" (click)="create()" size="large"  expand="block">create</ion-button>
+    <ion-button [disabled]="proposalForm.invalid" (click)="create()" size="large"  expand="block">{{ 'create' | translate }}</ion-button>
 </ion-footer>

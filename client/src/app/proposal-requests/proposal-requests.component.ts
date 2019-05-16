@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ProposalService } from '../_services/proposal.service';
 import { Request, RequestState } from '../_models/request';
 import { NavParams, ModalController, ActionSheetController, LoadingController, IonItemSliding } from '@ionic/angular';
-import { removeObjectFromArray } from '../_utils/utils';
+import { removeObjectFromArray } from '../_utils/functions';
 
 @Component({
   selector: 'app-proposal-requests',

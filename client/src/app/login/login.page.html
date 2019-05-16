@@ -5,9 +5,6 @@
 </ion-header>
   <form #f="ngForm" (ngSubmit)="login(f)">
     <ion-grid>
-      <ion-row  *ngIf="showError" justify-content-center>
-        <div>Error! Please try again</div>
-      </ion-row>
       <ion-row justify-content-center>
         <ion-col align-self-center size-md="6" size-lg="5" size-xs="12">
           <div text-center>

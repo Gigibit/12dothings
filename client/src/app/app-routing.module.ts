@@ -7,7 +7,7 @@ import { AuthGuard } from './_guards/auth.guard';
 
 const routes: Routes = [
   { path: '', canActivate: [AuthGuard], redirectTo: 'proposals', pathMatch: 'full' },
-  { path: 'home', canActivate: [AuthGuard],  loadChildren: './home/home.module#HomePageModule' },
+//  { path: 'home', canActivate: [AuthGuard],  loadChildren: './home/home.module#HomePageModule' },
   { path: 'proposals', canActivate: [AuthGuard],  component: ProposalsComponent },
   { path: 'create-proposal', canActivate: [AuthGuard],  component: CreateProposalComponent },
   { path: 'proposal-detail/:id', canActivate: [AuthGuard],  component: ProposalDetailComponent },
