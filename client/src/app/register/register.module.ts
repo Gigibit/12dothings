@@ -20,7 +20,7 @@ const routes: Routes = [
     CommonModule,
     FormsModule,
     IonicModule,
-    TranslateModule,
+    TranslateModule.forChild(),
     RouterModule.forChild(routes)
   ],
   declarations: [RegisterPage]

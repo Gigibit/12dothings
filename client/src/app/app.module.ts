@@ -51,7 +51,7 @@ import { AlertComponent } from './alert/alert.component';
 const config: SocketIoConfig = { url: 'http://localhost:3001/messages', options: {} };
 
 function createTranslateLoader(http: HttpClient) {
-  return new TranslateHttpLoader(http, './assets/i18n/', '.json');
+  return new TranslateHttpLoader(http, '../assets/i18n/', '.json');
 }
 
 
@@ -73,6 +73,7 @@ function createTranslateLoader(http: HttpClient) {
     BrowserModule, 
     IonicModule.forRoot(), 
     AppRoutingModule,
+    HttpModule,
     HttpClientModule,
     FormsModule,
     LoginPageModule,
@@ -82,7 +83,7 @@ function createTranslateLoader(http: HttpClient) {
       loader: {
         provide: TranslateLoader,
         useFactory: (createTranslateLoader),
-        deps: [Http]
+        deps: [HttpClient]
       }
     }),
     ReactiveFormsModule,

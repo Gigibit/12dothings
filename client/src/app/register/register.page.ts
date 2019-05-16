@@ -4,6 +4,7 @@ import { Location } from '@angular/common';
 import { Globalization } from '@ionic-native/globalization/ngx';
 import { languages, getLanguageByGlobalizationPrefix } from '../_datasources/languages';
 import { IonSelect } from '@ionic/angular';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-register',
@@ -15,6 +16,7 @@ export class RegisterPage implements OnInit {
   languages = languages
   language : string
   constructor(
+    private translateService: TranslateService,
     private authService: AuthService,
     private location: Location,
     private globalization: Globalization) { 
@@ -26,7 +28,9 @@ export class RegisterPage implements OnInit {
     }
   
     ngOnInit() {
-  }
+      window['tra'] = this.translateService
+  
+    }
   register(form) {
     this.authService.register(form.value).subscribe(data=>{
       if(data['status_code'] == 200){
