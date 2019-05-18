@@ -10,6 +10,7 @@ import { ThrowStmt } from '@angular/compiler';
 
 const CONTEXT = AUTH_SERVER + '/api/get-context'
 const UPLOAD_URL = SERVICE_SERVER + "/api/upload-image"
+const UPDATE_PROFILE_IMG_URL = SERVICE_SERVER + "/api/update-profile-img"
 const USER_INFO = SERVICE_SERVER + "/api/get-user-info/"
 const PROPS_HIM = SERVICE_SERVER + "/api/props/"
 const UNPROPS_HIM = SERVICE_SERVER + "/api/unprops/"
@@ -54,10 +55,10 @@ export class UserService {
           const formData = new FormData();
           const imgBlob = this.dataURItoBlob(imageData);
           formData.append('file', imgBlob, this.createFileName());
-          this.uploadImageData(formData);
+          this.uploadImageData(UPLOAD_URL, formData);
         }
         else{
-          this.uploadUri(imageData)
+          this.uploadUri(UPLOAD_URL, imageData)
         }
         if(onUri){
           // onUri(imageData)
@@ -66,7 +67,44 @@ export class UserService {
         console.log(err)
       });
     }
-    uploadUri(uri, onSuccess: (data)=>void = data=>{ console.log(data) }){
+
+
+    
+    udateProfileImg(sourceType: PictureSourceType, onUri: (string)=>void = null, onError: (error)=>void = null) {
+      var options: CameraOptions = {
+        quality: 100,
+        destinationType: this.camera.DestinationType.FILE_URI,
+        sourceType: sourceType,
+        saveToPhotoAlbum: false,
+        encodingType: this.camera.EncodingType.JPEG,
+        mediaType: this.camera.MediaType.PICTURE,
+        targetWidth: 400,
+        targetHeight: 400,
+        correctOrientation: true
+      };
+      this.camera.getPicture(options).then((imageData) => {
+        if (this.platform.is('mobileweb') || this.platform.is('desktop'))
+        {
+          imageData = "data:image/jpeg;base64," + imageData;
+          const formData = new FormData();
+          const imgBlob = this.dataURItoBlob(imageData);
+          formData.append('file', imgBlob, this.createFileName());
+          this.uploadImageData(UPDATE_PROFILE_IMG_URL, formData);
+        }
+        else{
+          this.uploadUri(UPDATE_PROFILE_IMG_URL, imageData)
+        }
+        if(onUri){
+          // onUri(imageData)
+        }
+      }, err=>{
+        console.log(err)
+      });
+    }
+
+
+
+    uploadUri(upload_url, uri, onSuccess: (data)=>void = data=>{ console.log(data) }){
       
       let options: FileUploadOptions = {
         fileKey: 'file',
@@ -77,7 +115,7 @@ export class UserService {
         },
         fileName :  this.createFileName()
       }
-      this.fileTransfer.upload(encodeURI(uri), UPLOAD_URL,options)
+      this.fileTransfer.upload(encodeURI(uri), upload_url, options)
       .then(data=>{ 
         console.log("yuppi")
 
@@ -86,8 +124,8 @@ export class UserService {
       })
       .catch( (err) => console.log(err));
     }
-    uploadImageData(formData: FormData) {
-      return this.http.post(UPLOAD_URL, formData ).subscribe(data=> {
+    uploadImageData(upload_url, formData: FormData) {
+      return this.http.post(upload_url, formData ).subscribe(data=> {
         console.log(data)
         console.log("yuppi")
 

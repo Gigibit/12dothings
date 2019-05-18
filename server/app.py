@@ -27,7 +27,7 @@ MONGO_PWD = '7AUUoXT9mpq4M0GB'
 client = MongoClient('mongodb+srv://%s:%s@erica-39qdu.mongodb.net/test?retryWrites=true'%(MONGO_USR, MONGO_PWD))
 db = client.whowant
 db.proposals.create_index( [ ('position', GEOSPHERE) ], background=True)
-db.users.create_index( [ ("phone", 1 ) ], unique = True )
+db.users.create_index( [ ("email", 1 ) ], unique = True )
 
 
 MY_SECRET_FOR_EVER = 'Saraccccc'
@@ -179,15 +179,12 @@ def proposals():
                                 ])
                             },
                          'created_by': {
-                            'id': {
                              '$nin' : current_user.get('blocked_users', [])
-                            }
                          }
                         }
                 proposal_nation_filter = request.args.get('nation_filter', None)
-
                 if proposal_nation_filter:
-                    query['created_by']['nation'] = proposal_nation_filter
+                    query['language'] = proposal_nation_filter
 
                 proposals = db.proposals.find(query)
 
@@ -201,11 +198,14 @@ def proposals():
             user, owner_id, email             = get_user(access_token)        
             #TODO: map all the fields needed
             proposal = proposal_request
+            proposal['title'] = proposal_request['title'].capitalize()
+            proposal['description'] = proposal_request['description'].capitalize()
             proposal['created_by'] = owner_id
             proposal['owner_info'] = slice_id(db.users.find_one({'_id':ObjectId(owner_id)}, USER_FOR_SYNTHESIS))
             proposal['users'] = []
             proposal['join_requests'] = []
-            
+            proposal['language'] = proposal_request.get('language', '')
+
             if proposal_request.get('use_owner_photo', False):
                 proposal['img'] = proposal['owner_info']['profile_img']
             elif proposal_request.get('proposal_img'):
@@ -352,8 +352,8 @@ def register():
         existing_user = db.users.find_one({ 'email': user['email']})
         if existing_user is None:
             hey = db.users.insert_one({
-                'name' : user['name'],
-                'surname' : user['surname'],
+                'name' : user['name'].title(),
+                'surname' : user['surname'].title(),
                 'email': user['email'],
                 'language': user['language'],
                 'blocked_users' : [],
@@ -434,6 +434,13 @@ def login():
 
 @app.route('/api/upload-image', methods=['POST'])
 def upload_image():
+    return update_image(profile=False)
+
+@app.route('/api/update-profile-img', methods=['POST'])
+def update_profile_img():
+    return update_image(profile=True)
+
+def update_image(profile=False):
     access_token = request.headers.get('auth-token', None)
     if access_token :
         user, id, email = get_user(access_token)
@@ -441,14 +448,21 @@ def upload_image():
         img = upload_file(id)
         print('out of if')
         if img:
-            print(img)
-            #TODO: check size of user's imgs
-            result = db.users.update_one({'_id':ObjectId(id)}, {
-                "$push":{
-                    "imgs" : img
+            if profile:
+                query = {
+                    '$set' : {
+                        'profile_img': img
+                    }
                 }
-            })
-            print(id)
+            else:
+                query = {
+                    "$push":{
+                        "imgs" : img
+                    }
+                }
+
+            #TODO: check size of user's imgs
+            result = db.users.update_one({'_id':ObjectId(id)}, query)
             return jsonify({ 'status' : 'OK', 'status_code': 200 })
         else:
             print('no img no party')
@@ -456,6 +470,11 @@ def upload_image():
     else :
         print('no token no party')
         return jsonify({ 'status' : 'ERROR' ,'code' : 'user_not_verified', 'status_code' : 401 })
+
+
+
+
+
 
 '''
     SOCKETIO
@@ -620,8 +639,9 @@ def upload_file(user_dir):
 
 class Responses:
     @staticmethod
+    @app.errorhandler(401)
     def unauthorized():
-        return jsonify({ 'status' : 'ERROR' ,'code' : 'unauthorized', 'status_code' : 401 })
+        return jsonify({ 'status' : 'ERROR' ,'code' : 'unauthorized'}), 401
  
     @staticmethod
     def success(additional_data = None):

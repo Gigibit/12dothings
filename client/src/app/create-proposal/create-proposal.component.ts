@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { Place } from '../autocomplete-input/autocomplete-input.component';
+import { Place } from '../_components/autocomplete-input/autocomplete-input.component';
 import { ProposalService } from '../_services/proposal.service';
 import { PositionType } from '../_models/proposal';
 import { ModalController, LoadingController } from '@ionic/angular';
 import { Globalization } from '@ionic-native/globalization/ngx';
-import { languages, getLanguageByGlobalizationPrefix } from '../_datasources/languages';
+import { languages, getLanguageByPrefix } from '../_datasources/languages';
 import { TranslateService } from '@ngx-translate/core';
 
 
@@ -34,12 +34,13 @@ export class CreateProposalComponent implements OnInit {
         title: ['', Validators.required],
         city: ['', Validators.required],
         district: ['', Validators.required],
+        language: ['', Validators.required],
         description: [''],
 
       });
       this.globalization.getPreferredLanguage()
       .then(res => {
-        this.language = getLanguageByGlobalizationPrefix(res)
+        this.language = getLanguageByPrefix(res.value)
       })
       .catch(e => console.log(e));
     }

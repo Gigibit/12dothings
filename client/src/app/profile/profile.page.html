@@ -3,15 +3,15 @@
     <ion-button (click)="location.back()">
       <ion-icon name="ios-arrow-back"></ion-icon>
     </ion-button>
-    <div class="dots"  slot="ends" (click)="userPopover($event)">
+    <ion-button class="dots" (click)="userPopover($event)">
       <ion-icon name="more"></ion-icon>
-    </div>
+    </ion-button>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
   <div class="userInfo" *ngIf="userInfo">
-    <ion-avatar id="profileImage" >
+    <ion-avatar id="profileImage" (click)="openEdit()">
       <ion-img [src]="userInfo.profileImg" ></ion-img>
     </ion-avatar>
     <ion-label class="user-name">{{userInfo.name}} {{userInfo.surname}}</ion-label>
@@ -84,8 +84,12 @@
   
 </ion-content>
 <ion-footer>
-  <ion-button fill="clear" expand="full" (click)="selectImage()">
+  <ion-button *ngIf="section=='proposals'" fill="clear" expand="full" (click)="openCreateProposalModal()">
+    <ion-icon slot="start" name="plus"></ion-icon>
+    {{ 'create' | translate}}
+  </ion-button>
+  <ion-button *ngIf="section=='gallery'" fill="clear" expand="full" (click)="selectImage()">
     <ion-icon slot="start" name="camera"></ion-icon>
-    Add Image
+    {{ 'add' | translate }}
   </ion-button>
 </ion-footer>

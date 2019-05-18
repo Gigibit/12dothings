@@ -8,12 +8,12 @@
 <ion-content padding>
     <h3>{{'create_new_proposal_title' | translate }}</h3>
     <form [formGroup]="proposalForm" novalidate>
-        <ion-select slot="end" interface="popover" #languageSelect formControlName="language">
+        <ion-select slot="end" interface="popover" ngDefaultControl #languageSelect formControlName="language">
             <ion-select-option *ngFor="let language of languages | keyvalue" [value]="language.value.name">{{language.value.name}}</ion-select-option>
         </ion-select>
         <ion-item lines="none">
-            <ion-label >{{ 'title' | translate }}</ion-label>
-            <ion-input autocapitalize="on" class="width-80 shadowed bordered margin-left-5" placeholder="{{ 'a title...' | translate }}" type="text" formControlName="title"></ion-input>
+            <ion-label class="autocomplete-title">{{ 'title' | translate }}</ion-label>
+            <ion-input autocapitalize="on" class="width-80 shadowed bordered margin-left-5" placeholder="{{ 'create_new_proposal_a_title_placeholder' | translate }}" type="text" formControlName="title"></ion-input>
         </ion-item>
         <ion-item lines="none">
             <ion-label class="autocomplete-title" position="stacked">{{ 'city' | translate }}</ion-label>
@@ -27,7 +27,7 @@
         </ion-item>
         <ion-item lines="none">
             <ion-label position="stacked">Description</ion-label>
-            <ion-textarea class="bordered margin-top-15"  autocapitalize="on" placeholder="{{'a description...' | translate }}" formControlName="description"></ion-textarea>
+            <ion-textarea class="bordered margin-top-15"  autocapitalize="on" placeholder="{{'create_new_proposal_a_description_placeholder' | translate }}" formControlName="description"></ion-textarea>
         </ion-item>
     </form>
     

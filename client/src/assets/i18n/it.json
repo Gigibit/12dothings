@@ -1,4 +1,24 @@
 {
     "fake_name": "Pippo",
-    "fake_surname": "Dal Sacco"
+    "fake_surname": "Dal Sacco",
+    "chat_room_title" : "chat room",
+    "create_new_proposal_title": "crea una nuova experience",
+    "title" : "titolo",
+    "create_new_proposal_a_title_placeholder": "un titolo..",
+    "create_new_proposal_a_description_placeholder": "una descrizione...",
+    "city" : "città",
+    "district": "zona",
+    "accept_all_requests": "accetta automaticamente tutte le richieste di partecipazione",
+    "create" : "crea",
+    "register_page_title" : "registrati",
+    "language" : "lingua",
+    "confirm_password" : "conferma password",
+    "register_button_text": "registrati",
+    "please_wait": "aspetta un po'...",
+    "select_image_source": "scegli",
+    "load_from_library": "galleria",
+    "use_camera": "fotocamera",
+    "cancel": "annulla",
+    "there_are_no_pending_requests": "non ci sono richieste da approvare",
+    "add": "aggiungi"
 }

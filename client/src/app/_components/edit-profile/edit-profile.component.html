@@ -1,0 +1,31 @@
+<ion-content padding>
+  
+  <ion-item class="close-fake" lines="none" text-center>
+    <ion-button (click)="close()" fill="clear" color="light">
+      <ion-icon name="close" slot="start"></ion-icon>
+    </ion-button>
+  </ion-item>
+  <div *ngIf="userInfo">
+      <h5 class="user-name">{{userInfo.name}} {{userInfo.surname}}</h5>
+      <ion-avatar id="profileImage" (click)="selectImage()" >
+      <div class="image-placeholder profileImageSrc" *ngIf="!userInfo.profileImg">
+        <ion-icon name="person"></ion-icon>
+      </div>
+      <ion-img *ngIf="userInfo.profileImg" class="profileImageSrc" src="{{userInfo.profileImg}}" ></ion-img>
+      
+      <ion-icon class="edit-image-pencil-icon" name="create"></ion-icon>
+    </ion-avatar>
+  </div>
+  
+  <ion-footer class="bottom">
+    <ion-toolbar>
+      <ion-button  (click)="close()">
+        <ion-icon slot="start" name="trash"></ion-icon>
+        {{ 'cancel' | translate }}
+      </ion-button>
+      <ion-button (click)="save()">
+        <ion-icon slot="start" name="checkmark"></ion-icon>
+        {{'confirm' | translate}}
+      </ion-button>
+    </ion-toolbar>
+  </ion-footer>

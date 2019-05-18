@@ -7,9 +7,9 @@ import {  ModalController, LoadingController, PopoverController, ToastController
 import { CreateProposalComponent } from '../create-proposal/create-proposal.component';
 import { OverlayEventDetail } from '@ionic/core';
 import { ProposalThreeDotsPopoverComponent } from '../proposal-three-dots-popover/proposal-three-dots-popover.component';
-import { Place } from '../autocomplete-input/autocomplete-input.component';
 import { withCommaOrEmpty, joinWithCommaOrEmpty } from '../_utils/functions';
 import { UserService } from '../_services/user.service';
+import { Place } from '../_components/autocomplete-input/autocomplete-input.component';
 
 const USE_OWN_LOCATION = 'useMyPosition'
 const USE_OWN_LANGUAGE = 'useMyLanguage'
@@ -19,7 +19,7 @@ const USE_OWN_LANGUAGE = 'useMyLanguage'
   templateUrl: './proposals.component.html',
   styleUrls: ['./proposals.component.scss'],
 })
-export class ProposalsComponent implements OnInit {
+export class ProposalsPage implements OnInit {
   filterSelectOptions = {
     header: 'filter',
     // subHeader: 'pllllll',
@@ -166,7 +166,7 @@ export class ProposalsComponent implements OnInit {
       this.watchLocationUpdates.unsubscribe();
     }
   
-    async openModal() {
+    async openCreateProposalModal() {
       const modal: HTMLIonModalElement =
          await this.modalController.create({
             component: CreateProposalComponent,

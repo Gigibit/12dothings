@@ -30,8 +30,6 @@ export class AuthService {
   }
   
   public get currentUserValue(): User {
-    console.log('iauosnfoa')
-    console.log(this.currentUserSubject.value)
     return this.currentUserSubject.value;
   }
   

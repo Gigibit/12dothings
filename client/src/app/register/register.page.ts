@@ -1,8 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { AuthService } from '../_services/auth.service';
 import { Location } from '@angular/common';
-import { Globalization } from '@ionic-native/globalization/ngx';
-import { languages, getLanguageByGlobalizationPrefix } from '../_datasources/languages';
+import { languages, getLanguageByPrefix } from '../_datasources/languages';
 import { IonSelect } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -18,13 +17,9 @@ export class RegisterPage implements OnInit {
   constructor(
     private translateService: TranslateService,
     private authService: AuthService,
-    private location: Location,
-    private globalization: Globalization) { 
-      this.globalization.getPreferredLanguage()
-        .then(res => {
-          this.language = getLanguageByGlobalizationPrefix(res)
-        })
-       .catch(e => console.log(e));
+    private location: Location) { 
+      translateService.get(getLanguageByPrefix(this.translateService.getBrowserLang()))
+                        .subscribe( result=>this.language = result )
     }
   
     ngOnInit() {

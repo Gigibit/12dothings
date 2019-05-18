@@ -8,11 +8,11 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
-import { HttpModule, Http } from '@angular/http';
+import { HttpModule } from '@angular/http';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
-import { ProposalsComponent } from './proposals/proposals.component';
+import { ProposalsPage } from './proposals/proposals.page';
 import { CreateProposalComponent } from './create-proposal/create-proposal.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS, HttpClient } from '@angular/common/http';
@@ -22,7 +22,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { SocketIoModule, SocketIoConfig } from 'ng-socket-io';
 import { ChatRoomPage } from './chat/chat.component';
-import { AutocompleteInputComponent } from './autocomplete-input/autocomplete-input.component';
+import { AutocompleteInputComponent } from './_components/autocomplete-input/autocomplete-input.component';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { NativeGeocoder } from '@ionic-native/native-geocoder/ngx';
 import { ProposalDetailComponent } from './proposal-detail/proposal-detail.component';
@@ -45,6 +45,7 @@ import { JwtInterceptor } from './_helpers/jwt.interceptor';
 import { UserProfilePopoverComponent } from './user-profile-popover/user-profile-popover.component';
 import { Globalization } from '@ionic-native/globalization/ngx';
 import { AlertComponent } from './alert/alert.component';
+import { EditProfileComponent } from './_components/edit-profile/edit-profile.component';
 
 
 
@@ -58,7 +59,7 @@ function createTranslateLoader(http: HttpClient) {
 @NgModule({
   declarations: [
     AppComponent,
-    ProposalsComponent,
+    ProposalsPage,
     CreateProposalComponent,
     ChatRoomPage,
     ImageModalComponent,
@@ -66,9 +67,15 @@ function createTranslateLoader(http: HttpClient) {
     AutocompleteInputComponent,
     ProposalThreeDotsPopoverComponent,
     AlertComponent,
+    EditProfileComponent,
     UserProfilePopoverComponent
   ],
-  entryComponents: [ImageModalComponent, ProposalThreeDotsPopoverComponent, UserProfilePopoverComponent],
+  entryComponents: [ 
+    ImageModalComponent, 
+    ProposalThreeDotsPopoverComponent, 
+    UserProfilePopoverComponent, 
+    EditProfileComponent 
+  ],
   imports: [
     BrowserModule, 
     IonicModule.forRoot(), 

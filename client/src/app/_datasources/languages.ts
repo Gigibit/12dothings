@@ -744,14 +744,11 @@ export const languages = {
 }
 
 
-export function getLanguageByGlobalizationPrefix(res){
-    if(res != null){
-        if( res.value != null){
-            let langPrefix = res.value.split('-')[0].toLowerCase()
-            if (languages[langPrefix] != null){
-                return languages[langPrefix].name
-                
-            }
+export function getLanguageByPrefix(prefix : string){
+    if(prefix != null){
+        prefix = prefix.split('-')[0].toLowerCase() //avoid case it-IT
+        if (languages[prefix] != null){
+            return languages[prefix].name
         }
     }
     return ""

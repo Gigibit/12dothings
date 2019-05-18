@@ -5,20 +5,17 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { IonicModule } from '@ionic/angular';
 
-import { ProfilePage } from './profile.page';
-import { ProposalRequestsComponent } from '../proposal-requests/proposal-requests.component';
-import { UserAvatarComponent } from '../user-avatar/user-avatar.component';
+import { ProposalsPage } from './proposals.page';
 import { TranslateModule } from '@ngx-translate/core';
 
 const routes: Routes = [
   {
     path: '',
-    component: ProfilePage
+    component: ProposalsPage
   }
 ];
 
 @NgModule({
-  entryComponents: [ProposalRequestsComponent],
   imports: [
     CommonModule,
     FormsModule,
@@ -26,7 +23,6 @@ const routes: Routes = [
     TranslateModule.forChild(),
     RouterModule.forChild(routes)
   ],
-  exports:[ UserAvatarComponent ],
-  declarations: [ ProfilePage, ProposalRequestsComponent, UserAvatarComponent ]
+  declarations: [ProposalsPage]
 })
-export class ProfilePageModule {}
+export class ProposalsPageModule {}

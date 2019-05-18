@@ -1,25 +1,26 @@
 <ion-header>
-  <ion-toolbar color="primary">
+  <ion-toolbar>
       <ion-button (click)="location.back()">
           <ion-icon name="ios-arrow-back"></ion-icon>
       </ion-button>
   </ion-toolbar>
 </ion-header>
+<ion-content padding>
   <form #f="ngForm" (ngSubmit)="register(f)">
     <ion-grid>
       <ion-row justify-content-center>
         <ion-col align-self-center size-md="6" size-lg="5" size-xs="12">
           <div text-center>
-            <h3>{{'register'| translate}}</h3>
+            <h3>{{'register_page_title'| translate}}</h3>
           </div>
           <div padding>
               <ion-item lines="none">
-                  <ion-select slot="end" interface="popover" #languageSelect selectedText="{{ 'language' | translate}}" name="language" [(ngModel)]="language">
+                  <ion-select slot="end" interface="popover" #languageSelect placeholder="{{ 'language' | translate}}" name="language" [(ngModel)]="language">
                     <ion-select-option *ngFor="let language of languages | keyvalue" [value]="language.value.name">{{language.value.name}}</ion-select-option>
                   </ion-select>
                 </ion-item>
               <ion-item>
-                  <ion-input name="name" type="text" placeholder="{{ 'DIOCARO' | translate }}" ngModel required></ion-input>
+                  <ion-input name="name" type="text" placeholder="{{ 'fake_name' | translate }}" ngModel required></ion-input>
                 </ion-item>
                 <ion-item>
                   <ion-input name="surname" type="text" placeholder="{{ 'fake_surname' | translate }}" ngModel required></ion-input>
@@ -42,3 +43,4 @@
       </ion-row>
     </ion-grid>
   </form>
+</ion-content>

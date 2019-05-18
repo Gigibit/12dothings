@@ -3,6 +3,7 @@
     <ion-title>wanado</ion-title>
   </ion-toolbar>
 </ion-header>
+<ion-content padding>
   <form #f="ngForm" (ngSubmit)="login(f)">
     <ion-grid>
       <ion-row justify-content-center>
@@ -28,3 +29,4 @@
     </ion-grid>
     <div *ngIf="error" class="alert alert-danger">{{error}}</div>
   </form>
+</ion-content>

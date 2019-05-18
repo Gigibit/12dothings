@@ -12,6 +12,8 @@ import { RequestState } from '../_models/request';
 import { ImageModalComponent } from '../image-modal/image-modal.component';
 import { UserProfilePopoverComponent } from '../user-profile-popover/user-profile-popover.component';
 import { TranslateService } from '@ngx-translate/core';
+import { EditProfileComponent } from '../_components/edit-profile/edit-profile.component';
+import { CreateProposalComponent } from '../create-proposal/create-proposal.component';
 
 const COLUMN_COUNT = 4
 
@@ -128,7 +130,24 @@ export class ProfilePage implements OnInit {
     return await popover.present();
   }
 
-
+  async openProposalModal() {
+    const modal: HTMLIonModalElement =
+       await this.modalController.create({
+          component: CreateProposalComponent,
+          // componentProps: {
+          //    aParameter: true,
+          //    otherParameter: new Date()
+          // }
+    });
+     
+    modal.onDidDismiss().then((proposal: OverlayEventDetail<Proposal>) => {
+       if (proposal.data != null) {
+         console.log('The result:', proposal.data.id);
+       }
+    });
+    
+    await modal.present();
+}
 
   async onProposalRequestsClick(proposal: Proposal){
     if( proposal.joinRequests != null && 
@@ -165,6 +184,16 @@ export class ProfilePage implements OnInit {
       component: ImageModalComponent,
       componentProps: {
         img: img
+      }
+    }).then(modal => {
+      modal.present();
+    });
+  }
+  openEdit() {
+    this.modalController.create({
+      component: EditProfileComponent,
+      componentProps: {
+        info: this.userInfo
       }
     }).then(modal => {
       modal.present();
