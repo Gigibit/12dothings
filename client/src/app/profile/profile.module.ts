@@ -7,8 +7,8 @@ import { IonicModule } from '@ionic/angular';
 
 import { ProfilePage } from './profile.page';
 import { ProposalRequestsComponent } from '../proposal-requests/proposal-requests.component';
-import { UserAvatarComponent } from '../user-avatar/user-avatar.component';
 import { TranslateModule } from '@ngx-translate/core';
+import { SharedModule } from '../shared/shared.module';
 
 const routes: Routes = [
   {
@@ -23,10 +23,11 @@ const routes: Routes = [
     CommonModule,
     FormsModule,
     IonicModule,
+    SharedModule,
     TranslateModule.forChild(),
     RouterModule.forChild(routes)
   ],
-  exports:[ UserAvatarComponent ],
-  declarations: [ ProfilePage, ProposalRequestsComponent, UserAvatarComponent ]
+  exports:[ ],
+  declarations: [ ProfilePage, ProposalRequestsComponent ]
 })
 export class ProfilePageModule {}

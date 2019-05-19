@@ -3,6 +3,8 @@ import logging
 import jwt
 import re
 import sys
+import shutil
+import time
 
 from flask                  import Flask, render_template, request, url_for, redirect
 from flask_mail             import Mail, Message
@@ -28,6 +30,7 @@ client = MongoClient('mongodb+srv://%s:%s@erica-39qdu.mongodb.net/test?retryWrit
 db = client.whowant
 db.proposals.create_index( [ ('position', GEOSPHERE) ], background=True)
 db.users.create_index( [ ("email", 1 ) ], unique = True )
+db.conversations.create_index( [ ("key", 1 ) ], unique = True )
 
 
 MY_SECRET_FOR_EVER = 'Saraccccc'
@@ -36,7 +39,7 @@ MY_SECRET_FOR_EVER = 'Saraccccc'
 app  = Flask(__name__, template_folder='./templates')
 app.config['SECRET_KEY'] = 'vnkdjnfjknfl1232#'
 app.config.from_pyfile('config.cfg')
-
+PROFILE_IMG_DEFAULT_NAME = 'profile.png'
 UPLOAD_FOLDER = 'static/images/'
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
 
@@ -60,7 +63,17 @@ REMOVE = 1
 #app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///whowant.sqlite3'
 
 #db       = SQLAlchemy(app)
-
+@app.after_request
+def add_header(r):
+    """
+    Add headers to both force latest IE rendering engine or Chrome Frame,
+    and also to cache the rendered page for 10 minutes.
+    """
+    r.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    r.headers["Pragma"] = "no-cache"
+    r.headers["Expires"] = "0"
+    r.headers['Cache-Control'] = 'public, max-age=0'
+    return r
 
 '''
     email
@@ -351,22 +364,33 @@ def register():
         user = request.get_json()
         existing_user = db.users.find_one({ 'email': user['email']})
         if existing_user is None:
-            hey = db.users.insert_one({
+            print('inserting...')
+            user = db.users.insert_one({
                 'name' : user['name'].title(),
                 'surname' : user['surname'].title(),
                 'email': user['email'],
                 'language': user['language'],
                 'blocked_users' : [],
                 'password': generate_password_hash(user['password']),
-                'profile_img'  : user.get('img', DEFAULT_USER_IMG),
                 'props': [],
-                #TODO use ffmpeg to reduce size
-                'thumbnail'    : user.get('img',DEFAULT_USER_IMG),
                 'imgs' : [],
                 'verified' : False,
                 'logged': False,
                 'token': send_email_confirmation(user['email'])
             })
+            user_id = str(user.inserted_id)
+            default_profile_img_path = os.path.join(app.config['UPLOAD_FOLDER'], '__default', PROFILE_IMG_DEFAULT_NAME)
+            profile_img_path = user_img_dir(user_id) + '/'
+            filename = copy(default_profile_img_path, profile_img_path)  
+            profile_img_url = url_for('static', filename=os.path.join('images', user_id, filename) , _external=True)          
+            db.users.update_one({'_id':user.inserted_id},{
+                '$set':{
+                    #TODO use ffmpeg to reduce size
+                    'profile_img': profile_img_url,
+                    'thumbnail': profile_img_url
+                }
+            })
+            
             return Responses.success()
         else:
             return jsonify({'status' : 'ERROR', 'code': 'user_already_registered', 'status_code' : 409})
@@ -440,13 +464,48 @@ def upload_image():
 def update_profile_img():
     return update_image(profile=True)
 
+@app.route('/api/messages/<key>', methods=['POST', 'GET'])
+def conversations(key):
+    access_token = request.headers.get('auth-token', None)
+    if access_token :
+        user, user_id, email = get_user(access_token)
+        proposal = db.proposals.find_one({'_id' : ObjectId(key)})
+        print(proposal['users'])
+        print(user_id)
+        if user_id in proposal['users']:
+            if request.method == 'GET':
+                return Responses.success({'data': slice_ids(db.conversations.find_one({'key' : key}))})
+            elif request.method == 'POST':
+                message = request.get_json()
+                profile_img_url = url_for('static', filename=os.path.join('images', user_id, PROFILE_IMG_DEFAULT_NAME) , _external=True) + '?' + str(time.time() * 1000.0)
+
+                message['sender'] = {
+                    'id'   : encode(str(user_id)),
+                    'name' : user['name'],
+                    'surname': user['surname'],
+                    'profile_img' : profile_img_url
+                }
+                db.conversations.update_one({'key' : key}, {
+                    '$push': {
+                        'messages': message
+                    }
+                }, True )
+                socketio.emit('message', message, broadcast=True, room=key, namespace='/messages')
+
+                return Responses.success()
+
+
+        else:
+            return Responses.bad_request()
+            
+    else:
+        return Responses.unauthorized()
+    
 def update_image(profile=False):
     access_token = request.headers.get('auth-token', None)
     if access_token :
         user, id, email = get_user(access_token)
-        print('taken user')
-        img = upload_file(id)
-        print('out of if')
+        img = upload_file(id, _filename = PROFILE_IMG_DEFAULT_NAME if profile else None)
         if img:
             if profile:
                 query = {
@@ -488,6 +547,7 @@ def messageReceived(methods=['GET', 'POST']):
 def join(json):
     room = json['proposal']
     print(request.sid)
+    print('---------------------------')
     join_room(room)
 
 
@@ -496,11 +556,9 @@ def unjoin(json):
     leave_room(json['proposal'])
 
 
-@socketio.on('add-message', namespace="/messages")
-def add_message(json, methods=['GET', 'POST']):
-    print('received message for: ' + json['proposal'])
-    emit('message', json, broadcast=True, room=json['proposal'])
-
+# @socketio.on('add-message', namespace="/messages")
+# def add_message(json, methods=['POST']):
+#     emit('message', json, broadcast=True, room=json['proposal'])
 
 def edit_props(id, action = ADD):
     access_token    = request.headers.get('auth-token', None)
@@ -525,7 +583,11 @@ def edit_props(id, action = ADD):
 
     else:
         return Responses.unauthorized()    
-    
+
+
+
+
+
 def edit_request_state(state):
     access_token = request.headers.get('auth-token', None)
     if access_token :
@@ -562,6 +624,13 @@ def edit_request_state(state):
 '''
 UTILS
 '''
+def profile_img_for_user(user_dir):
+    return os.path.join(app.config['UPLOAD_FOLDER'], user_dir, PROFILE_IMG_DEFAULT_NAME)
+
+def user_img_dir(user_id):
+    return os.path.join(app.config['UPLOAD_FOLDER'], user_id)
+
+
 def slice_id(p): 
     p['id'] = str(p['_id'])
     p['created_at'] = str(p['_id'].generation_time)
@@ -575,6 +644,11 @@ def slice_ids(ps) : return [ slice_id(p) for p in ps ]
 def to_jwt(payload):         return jwt.encode(payload, MY_SECRET_FOR_EVER , algorithm='HS256')
 def from_jwt(encoded_jwt):   return jwt.decode(encoded_jwt, MY_SECRET_FOR_EVER, algorithms=['HS256'])
 
+def copy(src_file, dst_dir, name = PROFILE_IMG_DEFAULT_NAME):
+    os.makedirs(os.path.dirname(dst_dir), exist_ok=True)
+    shutil.copy2(src_file, dst_dir + '/' + name)
+    return name
+        
 
 
 from Crypto.Cipher import XOR
@@ -612,27 +686,27 @@ def allowed_file(filename):
     filename, file_extension = os.path.splitext(filename)
     return file_extension[1:] in ALLOWED_EXTENSIONS
 
-def upload_file(user_dir):
+def upload_file(user_dir, _filename = None):
     if request.method == 'POST':
         # check if the post request has the file part
         if 'file' not in request.files:
             print('hey niente', file=sys.stdout)
             return False
         file = request.files['file']
+        #TODO: convert image to png always
+
         # if user does not select file, browser also
         # submit a empty part without filename
         if file.filename == '':
             print('hey niente', file=sys.stdout)
             return False
+
         if file and allowed_file(file.filename):
-            print(file.filename, file=sys.stdout)
-            filename = secure_filename(file.filename)
+            filename =  _filename if _filename else secure_filename(file.filename)
             path = os.path.join(app.config['UPLOAD_FOLDER'], user_dir, filename)
             os.makedirs(os.path.dirname(path), exist_ok=True)
             file.save(path)
-            print('saved %s'%os.path.dirname(path), file=sys.stdout)
             return url_for('static', filename=os.path.join('images',user_dir, filename), _external=True)
-        print('hey' + str(allowed_file(file.filename)), file=sys.stderr)
     else:
         print('method not was allowed')
         return False

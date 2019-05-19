@@ -6,17 +6,14 @@
     </ion-button>
   </ion-item>
   <div *ngIf="userInfo">
-      <h5 class="user-name">{{userInfo.name}} {{userInfo.surname}}</h5>
+      <h5 text-center class="user-name">{{userInfo.name}} {{userInfo.surname}}</h5>
       <ion-avatar id="profileImage" (click)="selectImage()" >
-      <div class="image-placeholder profileImageSrc" *ngIf="!userInfo.profileImg">
-        <ion-icon name="person"></ion-icon>
-      </div>
-      <ion-img *ngIf="userInfo.profileImg" class="profileImageSrc" src="{{userInfo.profileImg}}" ></ion-img>
+      <img class="profileImageSrc" [src]="img" />
       
       <ion-icon class="edit-image-pencil-icon" name="create"></ion-icon>
     </ion-avatar>
   </div>
-  
+<!--   
   <ion-footer class="bottom">
     <ion-toolbar>
       <ion-button  (click)="close()">
@@ -28,4 +25,4 @@
         {{'confirm' | translate}}
       </ion-button>
     </ion-toolbar>
-  </ion-footer>
+  </ion-footer> -->

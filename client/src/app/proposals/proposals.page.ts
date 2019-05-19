@@ -7,7 +7,7 @@ import {  ModalController, LoadingController, PopoverController, ToastController
 import { CreateProposalComponent } from '../create-proposal/create-proposal.component';
 import { OverlayEventDetail } from '@ionic/core';
 import { ProposalThreeDotsPopoverComponent } from '../proposal-three-dots-popover/proposal-three-dots-popover.component';
-import { withCommaOrEmpty, joinWithCommaOrEmpty } from '../_utils/functions';
+import { joinWithCommaOrEmpty } from '../_utils/functions';
 import { UserService } from '../_services/user.service';
 import { Place } from '../_components/autocomplete-input/autocomplete-input.component';
 
@@ -16,8 +16,8 @@ const USE_OWN_LANGUAGE = 'useMyLanguage'
 
 @Component({
   selector: 'app-proposals',
-  templateUrl: './proposals.component.html',
-  styleUrls: ['./proposals.component.scss'],
+  templateUrl: './proposals.page.html',
+  styleUrls: ['./proposals.page.scss'],
 })
 export class ProposalsPage implements OnInit {
   filterSelectOptions = {

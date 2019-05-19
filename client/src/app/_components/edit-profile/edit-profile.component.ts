@@ -12,6 +12,7 @@ import { User } from 'src/app/_models/user';
 })
 export class EditProfileComponent implements OnInit {
   userInfo: User
+  img: string
   constructor(
     private translateService: TranslateService,
     private userService: UserService,
@@ -22,6 +23,7 @@ export class EditProfileComponent implements OnInit {
   
   ngOnInit() {
     this.userInfo = this.navParams.get('info');
+    this.img = this.userInfo.profileImg
   }
 
   close(){

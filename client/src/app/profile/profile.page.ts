@@ -84,13 +84,13 @@ export class ProfilePage implements OnInit {
     }
     
     async selectImage() {
-
+      
       let selectImageSourceString = await this.translateService.get('select_image_source').toPromise()
       let loadFromLibrariString = await this.translateService.get('load_from_library').toPromise()
       let useCameraString = await this.translateService.get('use_camera').toPromise()
       let cancelString = await this.translateService.get('cancel').toPromise()
-
-
+      
+      
       const actionSheet = await this.actionSheetController.create({
         header: selectImageSourceString,
         buttons: [{
@@ -129,77 +129,94 @@ export class ProfilePage implements OnInit {
     // })
     return await popover.present();
   }
-
+  
   async openProposalModal() {
     const modal: HTMLIonModalElement =
-       await this.modalController.create({
-          component: CreateProposalComponent,
-          // componentProps: {
-          //    aParameter: true,
-          //    otherParameter: new Date()
-          // }
+    await this.modalController.create({
+      component: CreateProposalComponent,
+      // componentProps: {
+      //    aParameter: true,
+      //    otherParameter: new Date()
+      // }
     });
-     
+    
     modal.onDidDismiss().then((proposal: OverlayEventDetail<Proposal>) => {
-       if (proposal.data != null) {
-         console.log('The result:', proposal.data.id);
-       }
+      if (proposal.data != null) {
+        console.log('The result:', proposal.data.id);
+      }
     });
     
     await modal.present();
-}
-
+  }
+  
   async onProposalRequestsClick(proposal: Proposal){
     if( proposal.joinRequests != null && 
-        proposal.joinRequests.filter( value => value.state == RequestState.PENDING ).length > 0
+      proposal.joinRequests.filter( value => value.state == RequestState.PENDING ).length > 0
       ){
-      const modal =  await this.modalController.create({
-        component: ProposalRequestsComponent,
-        componentProps: {
-          joinRequests: proposal.joinRequests,
-        }
-     });
-     modal.onDidDismiss().then((hasDoneSomethingOverlay:OverlayEventDetail)=>{
-        if(hasDoneSomethingOverlay.data){
-          this.ownProposals = []
-          this.ngOnInit()
-        }
-      });
-     modal.present();
-    }
-    else{
-      let thereAreNoPendingRequestMessage = await this.translateService.get('there_are_no_pending_requests').toPromise()
-      let toast = await this.toastController.create({
+        const modal =  await this.modalController.create({
+          component: ProposalRequestsComponent,
+          componentProps: {
+            joinRequests: proposal.joinRequests,
+          }
+        });
+        modal.onDidDismiss().then((hasDoneSomethingOverlay:OverlayEventDetail)=>{
+          if(hasDoneSomethingOverlay.data){
+            this.ownProposals = []
+            this.ngOnInit()
+          }
+        });
+        modal.present();
+      }
+      else{
+        let thereAreNoPendingRequestMessage = await this.translateService.get('there_are_no_pending_requests').toPromise()
+        let toast = await this.toastController.create({
           message: thereAreNoPendingRequestMessage,
           duration: 3000,
           position: 'top'
-      })
-      toast.present()
+        })
+        toast.present()
+      }
+      
     }
-   
+    
+    openPreview(img) {
+      this.modalController.create({
+        component: ImageModalComponent,
+        componentProps: {
+          img: img
+        }
+      }).then(modal => {
+        modal.present();
+      });
+    }
+    async openCreateProposalModal() {
+      const modal: HTMLIonModalElement =
+      await this.modalController.create({
+        component: CreateProposalComponent,
+        // componentProps: {
+        //    aParameter: true,
+        //    otherParameter: new Date()
+        // }
+      });
+      modal.onDidDismiss().then((proposal: OverlayEventDetail<Proposal>) => {
+        if (proposal.data != null) {
+          console.log('The result:', proposal.data.id);
+        }
+      });
+      
+      await modal.present();
+    }
+    openEdit() {
+      this.modalController.create({
+        component: EditProfileComponent,
+        componentProps: {
+          info: this.userInfo
+        }
+      }).then(modal => {
+        modal.present();
+      });
+    }
+    
+    
+    
   }
-
-  openPreview(img) {
-    this.modalController.create({
-      component: ImageModalComponent,
-      componentProps: {
-        img: img
-      }
-    }).then(modal => {
-      modal.present();
-    });
-  }
-  openEdit() {
-    this.modalController.create({
-      component: EditProfileComponent,
-      componentProps: {
-        info: this.userInfo
-      }
-    }).then(modal => {
-      modal.present();
-    });
-  }
-
-
-
-}

@@ -5,6 +5,7 @@ import { ChatService } from '../_services/chat.service';
 @Component({
   selector: 'app-chat',
   templateUrl: 'chat.component.html',
+  styleUrls: ['chat.component.scss']
 })
 export class ChatRoomPage {
   messages = [];
@@ -15,8 +16,8 @@ export class ChatRoomPage {
     private chatService: ChatService,
     private toastCtrl: ToastController) {
 
-    this.nickname = 'this.navParams.get';
-    chatService.connect({
+    this.chatService.connect({
+      id: '5ce1abfbb09ed4d72faf18b2',
       description : "Bell'evento ",
       users : [],
     })
@@ -24,25 +25,29 @@ export class ChatRoomPage {
       this.messages.push(message);
     });
     
-    this.chatService.getUsers().subscribe(data => {
-      let user = data['user'];
-      if (data['event'] === 'left') {
-        this.showToast('User left: ' + user);
-      } else {
-        this.showToast('User joined: ' + user);
-      }
-    });
+    // this.chatService.getUsers().subscribe(data => {
+    //   let user = data['user'];
+    //   if (data['event'] === 'left') {
+    //     this.showToast('User left: ' + user);
+    //   } else {
+    //     this.showToast('User joined: ' + user);
+    //   }
+    // });
   }
- 
+  mockKey = '5ce1abfbb09ed4d72faf18b2'
   sendMessage(){
-    this.chatService.sendMessage(this.message);
+    this.chatService.sendMessage(this.message, this.mockKey).subscribe(data => {
+        console.log(data)
+    });
     this.message = '';
   }
  
   ionViewWillLeave() {
     this.chatService.disconnect();
   }
- 
+
+
+
   showToast(msg) {
     let toast = this.toastCtrl.create({
       message: msg,

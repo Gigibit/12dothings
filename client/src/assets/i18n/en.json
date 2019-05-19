@@ -20,5 +20,8 @@
     "use_camera": "camera",
     "cancel": "cancel",
     "there_are_no_pending_requests": "there are no pending requests",
-    "add": "add"
+    "add": "add",
+    "please_add_image" : "you have no photos! upload image to convince others to participate and get involved!",
+    "no_proposals" : "there are no proposals, create one and involve!"
+
 }

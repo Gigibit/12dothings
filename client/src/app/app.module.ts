@@ -12,7 +12,6 @@ import { HttpModule } from '@angular/http';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
-import { ProposalsPage } from './proposals/proposals.page';
 import { CreateProposalComponent } from './create-proposal/create-proposal.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS, HttpClient } from '@angular/common/http';
@@ -22,11 +21,9 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { SocketIoModule, SocketIoConfig } from 'ng-socket-io';
 import { ChatRoomPage } from './chat/chat.component';
-import { AutocompleteInputComponent } from './_components/autocomplete-input/autocomplete-input.component';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { NativeGeocoder } from '@ionic-native/native-geocoder/ngx';
 import { ProposalDetailComponent } from './proposal-detail/proposal-detail.component';
-import { LoginPage } from './login/login.page';
 import { LoginPageModule } from './login/login.module';
 import { RegisterPageModule } from './register/register.module';
 
@@ -46,6 +43,8 @@ import { UserProfilePopoverComponent } from './user-profile-popover/user-profile
 import { Globalization } from '@ionic-native/globalization/ngx';
 import { AlertComponent } from './alert/alert.component';
 import { EditProfileComponent } from './_components/edit-profile/edit-profile.component';
+import { ProposalsPageModule } from './proposals/proposals.module';
+import { SharedModule } from './shared/shared.module';
 
 
 
@@ -59,16 +58,14 @@ function createTranslateLoader(http: HttpClient) {
 @NgModule({
   declarations: [
     AppComponent,
-    ProposalsPage,
     CreateProposalComponent,
     ChatRoomPage,
     ImageModalComponent,
     ProposalDetailComponent,
-    AutocompleteInputComponent,
     ProposalThreeDotsPopoverComponent,
     AlertComponent,
     EditProfileComponent,
-    UserProfilePopoverComponent
+    UserProfilePopoverComponent,
   ],
   entryComponents: [ 
     ImageModalComponent, 
@@ -82,7 +79,9 @@ function createTranslateLoader(http: HttpClient) {
     AppRoutingModule,
     HttpModule,
     HttpClientModule,
+    SharedModule,
     FormsModule,
+    ProposalsPageModule,
     LoginPageModule,
     ProfilePageModule,
     RegisterPageModule,

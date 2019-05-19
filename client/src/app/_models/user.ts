@@ -22,7 +22,7 @@ export class UserMapper{
             surname: data['surname'],
             age: data['age'],
             id: data['id'],
-            profileImg: data['profile_img'],
+            profileImg: data['profile_img']+'?'+new Date().getTime(),
             description: data['description'],
             iLike: data['has_propsed'],
             imgs: data['imgs'],

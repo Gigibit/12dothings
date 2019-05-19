@@ -3,7 +3,7 @@ import { Request, RequestMapper } from './request';
 import { titleCaseWord, timeSince } from '../_utils/functions';
 
 export interface Proposal{
-    id?: number
+    id?: string
     title?: String
     position?: Position
     description: String

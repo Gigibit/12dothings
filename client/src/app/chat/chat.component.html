@@ -3,13 +3,15 @@
     <ion-title>{{'chat_room_title' | translate }}</ion-title>
   </ion-toolbar>
 </ion-header>
+<ion-content>
   <div class="container">
     <div *ngFor="let msg of messages" class="message left">
-      <img class="user-img"  alt="" src="">
+      <img *ngIf="msg.sender.profile_img" class="user-img"  alt="" src="{{msg.sender.profile_img}}">
+      
       <div class="msg-detail">
         <div class="msg-info">
           <p>
-            {{msg.sender}}
+            {{msg.sender.name}}{{msg.sender.surname}}
           </p>
         </div>
         <div class="msg-content">
@@ -19,6 +21,7 @@
       </div>
     </div>
   </div>
+</ion-content>
 <ion-footer no-border>
   <div class="input-wrap">
     <textarea #messageInput placeholder="Enter your message!" [(ngModel)]="message" (keyup.enter)="sendMessage()">

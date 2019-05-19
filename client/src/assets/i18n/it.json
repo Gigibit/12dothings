@@ -20,5 +20,7 @@
     "use_camera": "fotocamera",
     "cancel": "annulla",
     "there_are_no_pending_requests": "non ci sono richieste da approvare",
-    "add": "aggiungi"
+    "add": "aggiungi",
+    "please_add_image" : "non hai caricato nessuna foto, aggiungi una tua foto per aumentare le possibilità di essere coinvolto dagli utenti che visualizzano il tuo profilo!",
+    "no_proposals" : "non ci sono ancora experience, aggiungine una!"
 }
