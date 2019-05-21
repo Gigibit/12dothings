@@ -20,7 +20,6 @@
             <app-autocomplete-input ngDefaultControl formControlName="city"   placeholder="{{ 'city' | translate }}"(onSearchResult)="onCitySelected($event)" ></app-autocomplete-input>
         </ion-item>
         
-        
         <ion-item lines="none">
             <ion-label class="autocomplete-title" position="stacked">{{ 'district' | translate }}</ion-label>
             <app-autocomplete-input ngDefaultControl formControlName="district"  placeholder="{{'district' | translate }}" (onSearchResult)="onZoneSelected($event)" [region]="selectedCity" ></app-autocomplete-input>

@@ -4,6 +4,7 @@ import { Socket } from 'ng-socket-io';
 import { Proposal } from '../_models/proposal';
 import { HttpClient } from '@angular/common/http';
 import { SERVICE_SERVER } from '../config';
+import { keyframes } from '@angular/animations';
 
 const MESSAGE_API_URL = SERVICE_SERVER + '/api/messages/'
 
@@ -20,7 +21,8 @@ export class ChatService {
 
   connect(proposal: Proposal){
     this.socket.connect();
-    this.socket.emit('join', {'sender': 'me', 'proposal': '5ce1abfbb09ed4d72faf18b2' });
+    this.socket.emit('join', {'sender': 'me', 'proposal': proposal.id });
+    console.log({'sender': 'me', 'proposal': proposal.id })
   }
 
 
@@ -34,13 +36,18 @@ export class ChatService {
     this.socket.disconnect();
   }
   
-  getMessages() {
+  getMessages(forKey : string, onFirstDataRetrieved: (()=>void)=null) {
     let observable = new Observable(observer => {
-      this.socket.on('message', (data) => {
-        observer.next(data);
-        console.log(data)
+      this.http.get(MESSAGE_API_URL + forKey).subscribe(response=> {
+        JSON.parse(response['data']).forEach(message => {
+          observer.next(message);       
+        });
+        this.socket.on('message', (data) => {
+          observer.next(data);
+          console.log(data)
+        });
       });
-    })
+    });
     return observable;
   }
 

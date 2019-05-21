@@ -45,6 +45,7 @@ import { AlertComponent } from './alert/alert.component';
 import { EditProfileComponent } from './_components/edit-profile/edit-profile.component';
 import { ProposalsPageModule } from './proposals/proposals.module';
 import { SharedModule } from './shared/shared.module';
+import { iosTransitionAnimation } from './_utils/transitions';
 
 
 
@@ -75,7 +76,9 @@ function createTranslateLoader(http: HttpClient) {
   ],
   imports: [
     BrowserModule, 
-    IonicModule.forRoot(), 
+    IonicModule.forRoot({  
+      navAnimation: iosTransitionAnimation,
+    }), 
     AppRoutingModule,
     HttpModule,
     HttpClientModule,

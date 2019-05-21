@@ -10,6 +10,7 @@ import { ProposalThreeDotsPopoverComponent } from '../proposal-three-dots-popove
 import { joinWithCommaOrEmpty } from '../_utils/functions';
 import { UserService } from '../_services/user.service';
 import { Place } from '../_components/autocomplete-input/autocomplete-input.component';
+import { AuthService } from '../_services/auth.service';
 
 const USE_OWN_LOCATION = 'useMyPosition'
 const USE_OWN_LANGUAGE = 'useMyLanguage'
@@ -40,7 +41,7 @@ export class ProposalsPage implements OnInit {
   watchLocationUpdates:any; 
   loading:any;
   isWatching:boolean;
- 
+  userImg:string
   //Geocoder configuration
   geoencoderOptions: NativeGeocoderOptions = {
     useLocale: true,
@@ -53,9 +54,14 @@ export class ProposalsPage implements OnInit {
     private geolocation: Geolocation,
     public popoverController: PopoverController,
     private toastCtrl: ToastController,
+    private authService: AuthService,
     private loadingCtrl : LoadingController,
     private nativeGeocoder: NativeGeocoder
-  ) {}
+  ) {
+    console.log('this.authService.currentUserValue')
+    this.userImg = this.authService.currentUserValue.profileImg
+    console.log(this.authService.currentUserValue)
+  }
  
   ngOnInit(){ this.getGeolocation() }
   
@@ -63,11 +69,13 @@ export class ProposalsPage implements OnInit {
     async getGeolocation(){
    
       this.geolocation.getCurrentPosition().then((resp) => {
+        this.useMyPosition = true;
         this.geoLatitude = resp.coords.latitude;
         this.geoLongitude = resp.coords.longitude; 
         this.geoAccuracy = resp.coords.accuracy;
         this.getGeoencoder(this.geoLatitude,this.geoLongitude);
        }).catch((error) => {
+         this.useMyPosition = false;
          console.log(error)
        });
     }
@@ -102,7 +110,6 @@ export class ProposalsPage implements OnInit {
         this.useMyPosition = useMyPosition
         this.onUseMyPositionStatusChanged()
       }
-      
     }
 
     onZoneSelected(zone: Place){
@@ -170,10 +177,7 @@ export class ProposalsPage implements OnInit {
       const modal: HTMLIonModalElement =
          await this.modalController.create({
             component: CreateProposalComponent,
-            // componentProps: {
-            //    aParameter: true,
-            //    otherParameter: new Date()
-            // }
+
       });
        
       modal.onDidDismiss().then((proposal: OverlayEventDetail<Proposal>) => {

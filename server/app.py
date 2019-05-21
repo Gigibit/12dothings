@@ -444,6 +444,7 @@ def login():
                     user['id'] = encode(str(user_was['_id']))
                     del user['_id']
                     user['token'] = to_jwt(user)
+                    pprint(user)
                     
                     return jsonify({ 'status' : 'OK', 'data': user })
                 else:
@@ -474,7 +475,8 @@ def conversations(key):
         print(user_id)
         if user_id in proposal['users']:
             if request.method == 'GET':
-                return Responses.success({'data': slice_ids(db.conversations.find_one({'key' : key}))})
+                conversation = db.conversations.find_one({'key' : key})
+                return Responses.success({'data': dumps(conversation.get('messages', []))})
             elif request.method == 'POST':
                 message = request.get_json()
                 profile_img_url = url_for('static', filename=os.path.join('images', user_id, PROFILE_IMG_DEFAULT_NAME) , _external=True) + '?' + str(time.time() * 1000.0)
@@ -483,8 +485,10 @@ def conversations(key):
                     'id'   : encode(str(user_id)),
                     'name' : user['name'],
                     'surname': user['surname'],
-                    'profile_img' : profile_img_url
+                    'email': email,
+                    'profile_img' : profile_img_url,
                 }
+                message['created_at'] = int(round(time.time() * 1000.0))
                 db.conversations.update_one({'key' : key}, {
                     '$push': {
                         'messages': message
@@ -546,7 +550,8 @@ def messageReceived(methods=['GET', 'POST']):
 @socketio.on('join', namespace="/messages")
 def join(json):
     room = json['proposal']
-    print(request.sid)
+    print('----------joining----------')
+    print(room)
     print('---------------------------')
     join_room(room)
 

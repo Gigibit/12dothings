@@ -16,8 +16,9 @@ export class ProposalDetailComponent implements OnInit {
   proposal : Proposal
   state : RequestState
   participants : User[]
+  section = 'partecipants'
   constructor(
-    private location: Location,
+    public location: Location,
     private proposalService: ProposalService,
     private activatedRoute: ActivatedRoute
   ) { }

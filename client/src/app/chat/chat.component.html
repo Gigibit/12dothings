@@ -1,33 +1,32 @@
-<ion-header>
-  <ion-toolbar color="primary">
-    <ion-title>{{'chat_room_title' | translate }}</ion-title>
-  </ion-toolbar>
-</ion-header>
-<ion-content>
-  <div class="container">
-    <div *ngFor="let msg of messages" class="message left">
+<div *ngIf="proposal">
+  <ion-content padding class="container" #messagesContent>
+    <div *ngFor="let msg of messages" class="message" [class.right]="this.email == msg.sender.email" [class.left]="this.email != msg.sender.email">
       <img *ngIf="msg.sender.profile_img" class="user-img"  alt="" src="{{msg.sender.profile_img}}">
       
       <div class="msg-detail">
         <div class="msg-info">
           <p>
-            {{msg.sender.name}}{{msg.sender.surname}}
+            {{msg.sender.name}} {{msg.sender.surname}}
           </p>
         </div>
         <div class="msg-content">
           <span class="triangle"></span>
           <p class="line-breaker ">{{msg.text}}</p>
+          <div class="created-at">{{ getTime(msg.created_at) }}</div>
         </div>
       </div>
     </div>
-  </div>
-</ion-content>
-<ion-footer no-border>
-  <div class="input-wrap">
-    <textarea #messageInput placeholder="Enter your message!" [(ngModel)]="message" (keyup.enter)="sendMessage()">
-    </textarea>
-    <button ion-button clear icon-only item-right (click)="sendMessage()">
-      <ion-icon name="ios-send" ios="ios-send" md="md-send"></ion-icon>
-    </button>
-  </div>
-</ion-footer>
+    <div class="vertical-space vertical-space message right"></div>
+  </ion-content>
+  <ion-footer no-border>
+    <div class="input-wrap">
+      <textarea #messageInput placeholder="Enter your message!" [(ngModel)]="message" (keyup.enter)="sendMessage()">
+      </textarea>
+      <button class="send-btn" ion-button clear icon-only item-right (click)="sendMessage()">
+        <div class="icon-wrapper">
+          <ion-icon class="send-icon" name="ios-send" ios="ios-send" md="md-send"></ion-icon>
+        </div>
+      </button>
+    </div>
+  </ion-footer>
+</div>

@@ -8,25 +8,35 @@
 
 <ion-content padding *ngIf="proposal">
   
-  <h1>{{proposal.title}}</h1>
-  <ion-label>{{proposal.description}}</ion-label>
+  <h1 text-center>{{proposal.title}}</h1>
   
-  <div class="partecipants-list-container">
-    <div class="partecipants-list" *ngIf="participants && participants.length > 0">
-      <h3 class="partecipants-list-title">partecipants</h3>
-      <div *ngFor="let user of participants">
-        <app-user-avatar class="partecipant-avatar" [userInfo]="user"></app-user-avatar>
-        {{user.name}}
+  <ion-segment [(ngModel)]="section">
+    <ion-segment-button value="partecipants"> detail </ion-segment-button>
+    <ion-segment-button value="chat"  *ngIf="state=='APPROVED'">  chat   </ion-segment-button>
+  </ion-segment>  
+  
+  <div *ngIf="section == 'partecipants'">
+    
+    <div class="partecipants-list-container" >
+    <p class="proposal-description">{{proposal.description}}</p>
+      <div class="partecipants-list" *ngIf="participants && participants.length > 0">
+        <h3 class="partecipants-list-title">partecipants</h3>
+        <div *ngFor="let user of participants">
+          <app-user-avatar class="partecipant-avatar" [userInfo]="user"></app-user-avatar>
+          {{user.name}} {{user.surname}}
+        </div>
       </div>
     </div>
   </div>
+  <app-chat [proposal]="proposal" *ngIf="state == 'APPROVED' && section == 'chat'"></app-chat>
+  
 </ion-content>
 
-<ion-footer>
+<ion-footer *ngIf="state != 'APPROVED'">
   <div [ngSwitch]="state">
     <ion-button *ngSwitchCase="'NOT_REQUESTED'" (click)="join()" fill="clear" expand="full"  >ask for join!</ion-button>
     <ion-button *ngSwitchCase="'PENDING'" [disabled]="true" fill="clear" expand="full"  >request pending, stay tuned!</ion-button>    
     <ion-button *ngSwitchCase="'DENIED'" [disabled]="true" fill="clear" expand="full"  >request pending, stay tuned!</ion-button>    
-    <ion-button *ngSwitchCase="'APPROVED'" [disabled]="true" fill="clear" expand="full"  >request approved!</ion-button>    
+    <!-- <ion-button *ngSwitchCase="'APPROVED'" [disabled]="true" fill="clear" expand="full"  >request approved!</ion-button>     -->
   </div>
 </ion-footer>

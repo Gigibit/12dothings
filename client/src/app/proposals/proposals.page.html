@@ -1,13 +1,15 @@
 <ion-header>
   <ion-toolbar>
-    <ion-label float="right" routerLink="/profile"  routerDirection="forward">
-      <ion-icon class="user-profile-icon" name="person"></ion-icon>
-    </ion-label>
+
+    <ion-avatar class="profile-image" float="right" routerLink="/profile"  routerDirection="forward">
+      <img class="user-profile-img" [src]="userImg" />
+    </ion-avatar>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <ion-item>
+  <h5 text-center >wanadoo</h5>
+  <ion-item lines="none">
     <ion-select slot="end" selectedText="filters" [interfaceOptions]="filterSelectOptions" multiple="true" (ionChange)="onFilterChanged()" [(ngModel)]="filter" >
       <ion-select-option value="useMyPosition" selected="selected">your location</ion-select-option>
       <ion-select-option value="useMyLanguage" selected="selected">your language</ion-select-option>
@@ -23,11 +25,11 @@
   </ion-button> 
   <ion-list>
     <ion-card  *ngFor="let proposal of proposals" routerDirection="forward">
-      <ion-card-header>
+      <ion-card-header class="proposal-header">
         <app-user-avatar [userInfo]="proposal.ownerInfo"></app-user-avatar>
-        <div class="userInfo" >
-          <ion-card-subtitle [routerLink]="['/proposal-detail/', proposal.id]">{{proposal.ownerInfo?.name}} {{proposal.ownerInfo?.surname}}</ion-card-subtitle>
-          <ion-card-title class="proposal-title"  [routerLink]="['/proposal-detail/', proposal.id]">{{proposal.title}}</ion-card-title>
+        <div class="userInfo" [routerLink]="['/proposal-detail/', proposal.id]">
+          <ion-card-subtitle>{{proposal.ownerInfo?.name}} {{proposal.ownerInfo?.surname}}</ion-card-subtitle>
+          <ion-card-title class="proposal-title">{{proposal.title}}</ion-card-title>
           <ion-label class="timestamp" position="stacked">{{proposal.createdAt}}</ion-label>
         </div>
         <div class="dots" (click)="presentPopover($event, proposal)">

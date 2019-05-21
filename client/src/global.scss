@@ -10,21 +10,41 @@
 @import '~@ionic/angular/css/text-transformation.css';
 @import '~@ionic/angular/css/flex-utils.css';
 
+
+
+
+
+:focus {
+    outline: none;
+    outline-color: none;
+    outline-style: none;
+    outline-width: 0;
+}
+
 ion-button, ion-toolbar, ion-searchbar {
     --ion-color-base: transparent !important;
     --background: transparent;
     --color: #777;
     --background-activated: #f5f6f9;
-    --color-activated: #472daa;
+    --background-focused : transparent;
+
 }
+
+button{
+    text-transform: none;
+}
+
 ion-button{
     --box-shadow: none;
+    text-transform: none;
 }
 
 ion-title{
     float:right;
 }
-
+ion-button-effect{
+    display: none;
+}
 ion-range{
     --knob-size: 25px;
     --bar-height: 4px;

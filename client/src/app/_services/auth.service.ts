@@ -37,7 +37,6 @@ export class AuthService {
     return this.http.post<User>(LOGIN_URL, { email : email, password:password })
     .pipe(map(response => {
       let user = UserMapper.fromJson(response['data'])
-      console.log(user)
       // login successful if there's a jwt token in the response
       if (user && user.token) {
         // store user details and jwt token in local storage to keep user logged in between page refreshes
@@ -47,6 +46,10 @@ export class AuthService {
       
       return user;
     }));
+  }
+  contextRefresh(user:User){
+    localStorage.setItem('currentUser', JSON.stringify(user));
+    this.currentUserSubject.next(user);
   }
   
   logout() {
