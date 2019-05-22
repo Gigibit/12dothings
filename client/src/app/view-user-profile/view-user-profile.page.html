@@ -1,36 +1,43 @@
 <ion-header>
   <ion-toolbar>
-      <ion-button (click)="location.back()">
-        <ion-icon name="ios-arrow-back"></ion-icon>
-      </ion-button>
+    <ion-button (click)="location.back()">
+      <ion-icon name="ios-arrow-back"></ion-icon>
+    </ion-button>
     <!-- <ion-title>view-user-profile</ion-title> -->
   </ion-toolbar>
 </ion-header>
 
 <ion-content *ngIf="userInfo">
-    <div class="like-button-container">
-        <ion-button class="star" clear block [class.unlike]="!userInfo.iLike" [class.like]="userInfo.iLike" (click)="userInfo.iLike ? unprops() : props()">
-            <ion-icon name="star"></ion-icon>
-        </ion-button>
-        <div class="like-count-wrapper">
-          <span class="like-count" *ngIf="likeCount && likeCount > 0">{{ likeCount }}</span>
-        </div>
-      </div>
-  <div class="userInfo" >
 
-    <ion-avatar id="profileImage" >
-      <img [src]="userInfo.profileImg" />
-    </ion-avatar>
-    <ion-label class="user-name">{{userInfo?.name}} {{userInfo?.surname}}</ion-label>
-
+  <ion-avatar class="blur-profile-image" >
+    <img [src]="userInfo.profileImg" />
+  </ion-avatar>
+  <div class="user-info" >
+    
+      <ion-avatar id="profileImage" >
+        <img [src]="userInfo.profileImg" />
+      </ion-avatar>
+      
+      
+      
+      
   </div>
+  <div class="like-button-container">
+      <ion-button class="star" clear block [class.unlike]="!userInfo.iLike" [class.like]="userInfo.iLike" (click)="userInfo.iLike ? unprops() : props()">
+        <ion-icon name="star"></ion-icon>
+      </ion-button>
+      <div class="like-count-wrapper">
+        <span class="like-count" *ngIf="likeCount && likeCount > 0">{{ likeCount }}</span>
+      </div>
+    </div>
+  <ion-label class="user-name">{{userInfo?.name}} {{userInfo?.surname}}</ion-label>
   
   <ion-label class="address" *ngIf="userInfo.address">
     <ion-icon name="pin"></ion-icon>
     {{userInfo.address}}
   </ion-label>
-
-
+  
+  
   <div class="gallery">
     <!-- Responsive Layout with Ion Grid-->
     <ion-grid class="gallery-grid">
