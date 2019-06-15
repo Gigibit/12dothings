@@ -23,8 +23,6 @@ export class RegisterPage implements OnInit {
     }
   
     ngOnInit() {
-      window['tra'] = this.translateService
-  
     }
   register(form) {
     this.authService.register(form.value).subscribe(data=>{
