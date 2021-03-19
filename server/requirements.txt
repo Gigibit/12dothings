@@ -6,7 +6,7 @@ chardet==3.0.4
 Click==7.0
 cryptography==2.6.1
 Django==2.2.10
-djangorestframework==3.9.2
+djangorestframework==3.11.2
 dnspython==1.16.0
 Flask==1.0.2
 Flask-Cors==3.0.7
