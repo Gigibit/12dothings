@@ -9,7 +9,7 @@ Django==2.2.10
 djangorestframework==3.9.2
 dnspython==1.16.0
 Flask==1.0.2
-Flask-Cors==3.0.7
+Flask-Cors==3.0.9
 Flask-Email==1.4.4
 Flask-Ext==0.1
 Flask-Mail==0.9.1
