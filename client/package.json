@@ -57,7 +57,7 @@
     "cordova-sqlite-storage": "^3.2.0",
     "core-js": "^2.5.4",
     "leaflet-geosearch": "^2.7.0",
-    "moment": "^2.24.0",
+    "moment": "^2.29.4",
     "ng-socket-io": "^0.2.4",
     "rxjs": "~6.4.0",
     "rxjs-compat": "^6.4.0",
